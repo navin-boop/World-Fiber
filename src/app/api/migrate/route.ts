@@ -269,19 +269,30 @@ DO $$ BEGIN
 EXCEPTION WHEN duplicate_object THEN NULL; END $$;
 `;
 
+async function runMigration() {
+  await prisma.$executeRawUnsafe(DDL);
+  const tables = await prisma.$queryRaw<{ tablename: string }[]>`
+    SELECT tablename FROM pg_tables
+    WHERE schemaname = 'public'
+    ORDER BY tablename
+  `;
+  return tables.map((t) => t.tablename);
+}
+
+export async function GET() {
+  try {
+    const tables = await runMigration();
+    return NextResponse.json({ ok: true, message: "All tables created.", tables });
+  } catch (err) {
+    console.error("[migrate]", err);
+    return NextResponse.json({ ok: false, error: String(err) }, { status: 500 });
+  }
+}
+
 export async function POST() {
   try {
-    await prisma.$executeRawUnsafe(DDL);
-    const tables = await prisma.$queryRaw<{ tablename: string }[]>`
-      SELECT tablename FROM pg_tables
-      WHERE schemaname = 'public'
-      ORDER BY tablename
-    `;
-    return NextResponse.json({
-      ok: true,
-      message: "All tables created.",
-      tables: tables.map((t) => t.tablename),
-    });
+    const tables = await runMigration();
+    return NextResponse.json({ ok: true, message: "All tables created.", tables });
   } catch (err) {
     console.error("[migrate]", err);
     return NextResponse.json({ ok: false, error: String(err) }, { status: 500 });
