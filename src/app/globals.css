@@ -1,0 +1,155 @@
+@import "tailwindcss";
+
+:root {
+  --primary-blue: #25468F;
+  --primary-green: #0B7F3A;
+  --sky-blue: #2298D4;
+  --dark-navy: #071A3D;
+  --text-dark: #171717;
+  --text-muted: #6B7280;
+  --border-gray: #E5E7EB;
+  --light-gray: #F7F8FA;
+}
+
+@theme inline {
+  --color-primary: #25468F;
+  --color-primary-dark: #071A3D;
+  --color-primary-green: #0B7F3A;
+  --color-sky: #2298D4;
+  --color-background: #ffffff;
+  --color-foreground: #171717;
+  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  color: #171717;
+  background: #ffffff;
+  font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.container-custom {
+  max-width: 1240px;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 1.5rem;
+  padding-right: 1.5rem;
+}
+
+@media (min-width: 768px) {
+  .container-custom {
+    padding-left: 2rem;
+    padding-right: 2rem;
+  }
+}
+
+.section-padding {
+  padding-top: 80px;
+  padding-bottom: 80px;
+}
+
+@media (min-width: 1024px) {
+  .section-padding {
+    padding-top: 100px;
+    padding-bottom: 100px;
+  }
+}
+
+.section-padding-sm {
+  padding-top: 56px;
+  padding-bottom: 56px;
+}
+
+@media (min-width: 1024px) {
+  .section-padding-sm {
+    padding-top: 72px;
+    padding-bottom: 72px;
+  }
+}
+
+/* Gradient utilities */
+.gradient-primary {
+  background: linear-gradient(135deg, #25468F 0%, #071A3D 100%);
+}
+
+.gradient-green {
+  background: linear-gradient(135deg, #0B7F3A 0%, #065a28 100%);
+}
+
+.text-gradient-green {
+  background: linear-gradient(135deg, #0B7F3A, #2298D4);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Card hover animations */
+.card-hover {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.card-hover:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 20px 40px rgba(0,0,0,0.12);
+}
+
+/* Fiber light effect */
+.fiber-glow {
+  text-shadow: 0 0 30px rgba(34, 152, 212, 0.3);
+}
+
+/* Admin sidebar */
+.admin-sidebar {
+  width: 260px;
+  min-height: 100vh;
+}
+
+/* Line clamp */
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.line-clamp-3 {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Button focus */
+button:focus-visible,
+a:focus-visible {
+  outline: 2px solid #25468F;
+  outline-offset: 2px;
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #F7F8FA;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #D1D5DB;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #9CA3AF;
+}

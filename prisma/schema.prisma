@@ -1,0 +1,239 @@
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["driverAdapters"]
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+model User {
+  id           String        @id @default(cuid())
+  email        String        @unique
+  password     String
+  name         String
+  role         String        @default("EDITOR")
+  isActive     Boolean       @default(true)
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  tickets      TicketNote[]
+  activityLogs ActivityLog[]
+}
+
+model Page {
+  id        String   @id @default(cuid())
+  title     String
+  slug      String   @unique
+  content   String   @default("")
+  metaTitle String   @default("")
+  metaDesc  String   @default("")
+  ogImage   String   @default("")
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Section {
+  id        String   @id @default(cuid())
+  page      String
+  key       String
+  label     String
+  content   String
+  isActive  Boolean  @default(true)
+  sortOrder Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([page, key])
+}
+
+model Banner {
+  id              String    @id @default(cuid())
+  title           String
+  subtitle        String    @default("")
+  desktopImageUrl String    @default("")
+  mobileImageUrl  String    @default("")
+  ctaText         String    @default("")
+  ctaLink         String    @default("")
+  placement       String
+  isActive        Boolean   @default(true)
+  sortOrder       Int       @default(0)
+  startDate       DateTime?
+  endDate         DateTime?
+  altText         String    @default("")
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+}
+
+model ImageSection {
+  id              String   @id @default(cuid())
+  sectionName     String
+  pagePlacement   String
+  title           String   @default("")
+  subtitle        String   @default("")
+  description     String   @default("")
+  desktopImageUrl String   @default("")
+  mobileImageUrl  String   @default("")
+  ctaText         String   @default("")
+  ctaLink         String   @default("")
+  altText         String   @default("")
+  overlayStyle    String   @default("dark")
+  isActive        Boolean  @default(true)
+  sortOrder       Int      @default(0)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+model Service {
+  id          String   @id @default(cuid())
+  name        String
+  slug        String   @unique
+  description String
+  icon        String   @default("")
+  imageUrl    String   @default("")
+  ctaText     String   @default("Learn More")
+  ctaLink     String   @default("")
+  parentId    String?
+  isActive    Boolean  @default(true)
+  sortOrder   Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Package {
+  id           String   @id @default(cuid())
+  name         String
+  slug         String   @unique
+  category     String
+  speed        String
+  price        Float
+  billingCycle String   @default("monthly")
+  description  String   @default("")
+  features     String
+  imageUrl     String   @default("")
+  isPopular    Boolean  @default(false)
+  isActive     Boolean  @default(true)
+  sortOrder    Int      @default(0)
+  termsTitle   String   @default("Terms & Conditions")
+  termsContent String   @default("")
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model Offer {
+  id              String    @id @default(cuid())
+  title           String
+  description     String
+  bannerUrl       String    @default("")
+  mobileBannerUrl String    @default("")
+  ctaText         String    @default("Learn More")
+  ctaLink         String    @default("")
+  startDate       DateTime?
+  endDate         DateTime?
+  isActive        Boolean   @default(true)
+  sortOrder       Int       @default(0)
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+}
+
+model FAQ {
+  id        String   @id @default(cuid())
+  question  String
+  answer    String
+  category  String   @default("General")
+  isActive  Boolean  @default(true)
+  sortOrder Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Testimonial {
+  id        String   @id @default(cuid())
+  name      String
+  location  String
+  photo     String   @default("")
+  rating    Int      @default(5)
+  text      String
+  isActive  Boolean  @default(true)
+  sortOrder Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Enquiry {
+  id                String   @id @default(cuid())
+  type              String   @default("GENERAL")
+  fullName          String
+  phone             String
+  email             String   @default("")
+  location          String   @default("")
+  interestedService String   @default("")
+  interestedPackage String   @default("")
+  message           String   @default("")
+  sourcePage        String   @default("")
+  status            String   @default("NEW")
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+}
+
+model SupportTicket {
+  id            String       @id @default(cuid())
+  ticketNumber  String       @unique
+  fullName      String
+  phone         String
+  email         String       @default("")
+  customerId    String       @default("")
+  issueType     String
+  priority      String       @default("MEDIUM")
+  message       String
+  attachmentUrl String       @default("")
+  status        String       @default("OPEN")
+  assignedToId  String?
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+  notes         TicketNote[]
+}
+
+model TicketNote {
+  id        String        @id @default(cuid())
+  ticketId  String
+  ticket    SupportTicket @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+  userId    String
+  user      User          @relation(fields: [userId], references: [id])
+  note      String
+  createdAt DateTime      @default(now())
+}
+
+model NewsletterSubscriber {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+}
+
+model Media {
+  id        String   @id @default(cuid())
+  filename  String
+  url       String
+  altText   String   @default("")
+  size      Int      @default(0)
+  mimeType  String   @default("")
+  createdAt DateTime @default(now())
+}
+
+model SiteSettings {
+  id        String   @id @default(cuid())
+  key       String   @unique
+  value     String
+  updatedAt DateTime @updatedAt
+}
+
+model ActivityLog {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  action    String
+  target    String   @default("")
+  details   String   @default("")
+  createdAt DateTime @default(now())
+}
