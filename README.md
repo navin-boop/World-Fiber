@@ -64,8 +64,8 @@ prisma/
 Create a `.env` file at the project root:
 
 ```bash
-# Database (SQLite for development)
-DATABASE_URL="file:./prisma/dev.db"
+# Database — see "Database URL resolution" below
+DATABASE_URL="postgresql://user:password@host:5432/worldfibernet"
 
 # NextAuth
 NEXTAUTH_SECRET="your-secret-key-change-in-production"
@@ -75,10 +75,21 @@ NEXTAUTH_URL="http://localhost:3000"
 NEXT_PUBLIC_SITE_URL="http://localhost:3000"
 ```
 
-For PostgreSQL production:
-```bash
-DATABASE_URL="postgresql://user:password@host:5432/worldfibernet"
-```
+### Database URL resolution
+
+The app resolves the PostgreSQL connection string from the **first** variable found in this order:
+
+| Priority | Variable | Source |
+|----------|----------|--------|
+| 1 | `DATABASE_URL` | Manual / generic |
+| 2 | `worldfiber_POSTGRES_PRISMA_URL` | Vercel Postgres integration (pooled, Prisma-safe) |
+| 3 | `worldfiber_POSTGRES_URL` | Vercel Postgres integration (pooled) |
+| 4 | `POSTGRES_PRISMA_URL` | Vercel Postgres — unprefixed fallback |
+| 5 | `POSTGRES_URL` | Vercel Postgres — unprefixed fallback |
+
+**On Vercel:** when the Postgres integration is linked to the `worldfiber` project, Vercel automatically injects `worldfiber_POSTGRES_PRISMA_URL` and `worldfiber_POSTGRES_URL`. No manual `DATABASE_URL` variable is needed.
+
+**Locally:** add `DATABASE_URL` to your `.env` file pointing at your local or remote PostgreSQL instance.
 
 ## Installation
 
