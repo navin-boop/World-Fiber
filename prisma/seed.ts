@@ -1,13 +1,9 @@
 import { PrismaClient } from "@prisma/client";
-import { PrismaLibSql } from "@prisma/adapter-libsql";
+import { PrismaPg } from "@prisma/adapter-pg";
 import bcrypt from "bcryptjs";
-import * as path from "path";
 
-const dbPath = path.join(process.cwd(), "prisma", "dev.db");
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const adapter = new PrismaLibSql({ url: `file:${dbPath}` } as any);
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const prisma = new PrismaClient({ adapter } as any);
+const adapter = new PrismaPg({ connectionString: process.env.DATABASE_URL });
+const prisma = new PrismaClient({ adapter });
 
 async function main() {
   console.log("🌱 Seeding database...");
@@ -105,7 +101,6 @@ async function main() {
       icon: "nettv",
       ctaText: "View Channels",
       ctaLink: "/iptv#net-tv",
-      parentId: null,
       sortOrder: 4,
     },
     {
