@@ -37,14 +37,15 @@ export default function MediaAdminPage() {
     if (!files?.length) return;
     setUploading(true);
     try {
+      let allOk = true;
       for (const file of Array.from(files)) {
         const formData = new FormData();
         formData.append("file", file);
         const res = await fetch("/api/media", { method: "POST", body: formData });
         const data = await res.json();
-        if (!data.success) toast.error(`Failed to upload ${file.name}`);
+        if (!data.success) { toast.error(`Failed to upload ${file.name}`); allOk = false; }
       }
-      toast.success("Upload complete!");
+      if (allOk) toast.success("Upload complete!");
       load();
     } catch { toast.error("Upload failed"); }
     finally { setUploading(false); if (fileRef.current) fileRef.current.value = ""; }

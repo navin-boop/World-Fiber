@@ -1,7 +1,15 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { writeFile, mkdir } from "fs/promises";
-import path from "path";
+import { createClient } from "@supabase/supabase-js";
+
+function getSupabaseAdmin() {
+  const url = process.env.worldfiber_SUPABASE_URL || process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const key = process.env.worldfiber_SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY;
+  if (!url || !key) throw new Error("Supabase env vars not set (SUPABASE_URL / SUPABASE_SERVICE_ROLE_KEY)");
+  return createClient(url, key, { auth: { persistSession: false } });
+}
+
+const BUCKET = "media";
 
 export async function GET() {
   try {
@@ -34,27 +42,34 @@ export async function POST(req: NextRequest) {
     const bytes = await file.arrayBuffer();
     const buffer = Buffer.from(bytes);
 
-    const uploadDir = path.join(process.cwd(), "public", "uploads");
-    await mkdir(uploadDir, { recursive: true });
-
     const ext = file.name.split(".").pop();
     const filename = `${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
-    const filepath = path.join(uploadDir, filename);
-    await writeFile(filepath, buffer);
+    const storagePath = `uploads/${filename}`;
 
-    const url = `/uploads/${filename}`;
+    const supabase = getSupabaseAdmin();
+
+    // Ensure bucket exists (no-op if already exists)
+    await supabase.storage.createBucket(BUCKET, { public: true }).catch(() => {});
+
+    const { error: uploadError } = await supabase.storage
+      .from(BUCKET)
+      .upload(storagePath, buffer, { contentType: file.type, upsert: false });
+
+    if (uploadError) {
+      console.error("[media] Supabase upload error:", uploadError);
+      return NextResponse.json({ success: false, message: "Failed to upload file to storage" }, { status: 500 });
+    }
+
+    const { data: publicUrlData } = supabase.storage.from(BUCKET).getPublicUrl(storagePath);
+    const url = publicUrlData.publicUrl;
+
     const media = await prisma.media.create({
-      data: {
-        filename: file.name,
-        url,
-        altText,
-        size: file.size,
-        mimeType: file.type,
-      },
+      data: { filename: file.name, url, altText, size: file.size, mimeType: file.type },
     });
 
     return NextResponse.json({ success: true, data: media, url });
-  } catch {
+  } catch (err) {
+    console.error("[media] upload error:", err);
     return NextResponse.json({ success: false, message: "Failed to upload file" }, { status: 500 });
   }
 }
