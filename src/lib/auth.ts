@@ -6,8 +6,6 @@ import { prisma } from "./prisma";
 const DEFAULT_ADMIN_EMAIL = "admin@worldfibernet.net.np";
 const DEFAULT_ADMIN_PASSWORD = "ChangeMe123!";
 
-// Derive a stable JWT secret from the DB URL so sessions work on Vercel
-// even before NEXTAUTH_SECRET is manually configured.
 function resolveSecret(): string {
   return (
     process.env.NEXTAUTH_SECRET ||
@@ -36,7 +34,7 @@ async function ensureAdminExists(): Promise<void> {
       isActive: true,
     },
   });
-  console.log("[wfn] Admin user created on first login attempt.");
+  console.log("[wfn] Admin user created on first login.");
 }
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
@@ -50,28 +48,38 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       async authorize(credentials) {
         if (!credentials?.email || !credentials?.password) return null;
 
-        // First-run: create the admin user if the database is empty.
-        await ensureAdminExists();
+        try {
+          await ensureAdminExists();
+        } catch (err) {
+          console.error("[wfn] ensureAdminExists failed:", err);
+          // DB unreachable — throw so NextAuth surfaces the real error
+          throw new Error("Database connection failed. Check server logs.");
+        }
 
-        const user = await prisma.user.findUnique({
-          where: { email: credentials.email as string },
-        });
+        try {
+          const user = await prisma.user.findUnique({
+            where: { email: credentials.email as string },
+          });
 
-        if (!user || !user.isActive) return null;
+          if (!user || !user.isActive) return null;
 
-        const isValid = await bcrypt.compare(
-          credentials.password as string,
-          user.password
-        );
+          const isValid = await bcrypt.compare(
+            credentials.password as string,
+            user.password
+          );
 
-        if (!isValid) return null;
+          if (!isValid) return null;
 
-        return {
-          id: user.id,
-          email: user.email,
-          name: user.name,
-          role: user.role,
-        };
+          return {
+            id: user.id,
+            email: user.email,
+            name: user.name,
+            role: user.role,
+          };
+        } catch (err) {
+          console.error("[wfn] authorize query failed:", err);
+          throw new Error("Database error during login.");
+        }
       },
     }),
   ],
