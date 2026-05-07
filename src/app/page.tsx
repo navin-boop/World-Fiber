@@ -8,6 +8,7 @@ import TestimonialsSection from "@/components/sections/TestimonialsSection";
 import NewsletterSection from "@/components/sections/NewsletterSection";
 import { CheckCircle2, MapPin, ArrowRight } from "lucide-react";
 import Link from "next/link";
+import { prisma } from "@/lib/prisma";
 
 export const metadata = {
   title: "World Fiber Net - Fiber Internet & IPTV in Nepal",
@@ -100,14 +101,43 @@ function CoverageStatsBanner() {
   );
 }
 
-export default function HomePage() {
+export default async function HomePage() {
+  const [heroBanners, fullwidthBanners] = await Promise.all([
+    prisma.banner.findMany({
+      where: { placement: "HOMEPAGE_HERO", isActive: true },
+      orderBy: { sortOrder: "asc" },
+      take: 1,
+    }).catch(() => []),
+    prisma.banner.findMany({
+      where: { placement: "HOMEPAGE_FULLWIDTH", isActive: true },
+      orderBy: { sortOrder: "asc" },
+      take: 1,
+    }).catch(() => []),
+  ]);
+
+  const hero = heroBanners[0];
+  const fullwidth = fullwidthBanners[0];
+
   return (
     <>
-      <HeroSection />
+      <HeroSection
+        title={hero?.title || undefined}
+        subtitle={hero?.subtitle || undefined}
+        cta1Text={hero?.ctaText || undefined}
+        cta1Link={hero?.ctaLink || undefined}
+        backgroundImageUrl={hero?.desktopImageUrl || undefined}
+        mobileImageUrl={hero?.mobileImageUrl || undefined}
+        altText={hero?.altText || undefined}
+      />
       <StatsStrip />
       <PromoCards />
       <ServicesSection />
-      <FullWidthPromo />
+      <FullWidthPromo
+        title={fullwidth?.title || undefined}
+        description={fullwidth?.subtitle || undefined}
+        cta1Text={fullwidth?.ctaText || undefined}
+        cta1Link={fullwidth?.ctaLink || undefined}
+      />
       <PackagesPreview />
       <CoverageSection />
       <TestimonialsSection />
