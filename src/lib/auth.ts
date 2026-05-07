@@ -57,7 +57,12 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   },
   session: {
     strategy: "jwt",
-    maxAge: 24 * 60 * 60, // 24 hours
+    maxAge: 24 * 60 * 60,
   },
-  secret: process.env.NEXTAUTH_SECRET,
+  // Required for Vercel and other hosted environments so NextAuth
+  // accepts session tokens issued from any hostname (*.vercel.app etc.)
+  trustHost: true,
+  secret:
+    process.env.NEXTAUTH_SECRET ||
+    process.env.AUTH_SECRET,
 });
