@@ -8,6 +8,9 @@ interface HeroSectionProps {
   cta1Link?: string;
   cta2Text?: string;
   cta2Link?: string;
+  backgroundImageUrl?: string;
+  mobileImageUrl?: string;
+  altText?: string;
 }
 
 export default function HeroSection({
@@ -17,26 +20,55 @@ export default function HeroSection({
   cta1Link = "/contact#new-connection",
   cta2Text = "View Packages",
   cta2Link = "/packages",
+  backgroundImageUrl,
+  mobileImageUrl,
+  altText,
 }: HeroSectionProps) {
+  const hasImage = !!backgroundImageUrl;
   return (
-    <section className="relative min-h-[560px] lg:min-h-[640px] overflow-hidden bg-gradient-to-br from-[#071A3D] via-[#25468F] to-[#071A3D]">
-      {/* Background pattern */}
+    <section className="relative min-h-[560px] lg:min-h-[640px] overflow-hidden bg-[#071A3D]">
+      {/* Background */}
       <div className="absolute inset-0">
-        <div className="absolute inset-0 opacity-20"
-          style={{
-            backgroundImage: `radial-gradient(ellipse at 20% 50%, #2298D4 0%, transparent 60%),
-                              radial-gradient(ellipse at 80% 20%, #0B7F3A 0%, transparent 50%),
-                              radial-gradient(ellipse at 60% 80%, #25468F 0%, transparent 60%)`,
-          }}
-        />
-        {/* Fiber lines */}
-        <svg className="absolute inset-0 w-full h-full opacity-10" viewBox="0 0 1200 640" preserveAspectRatio="xMidYMid slice">
-          <path d="M0,200 Q300,100 600,220 T1200,180" stroke="#2298D4" strokeWidth="2" fill="none" />
-          <path d="M0,350 Q400,250 700,380 T1200,320" stroke="#0B7F3A" strokeWidth="1.5" fill="none" />
-          <path d="M0,480 Q350,400 650,500 T1200,460" stroke="#2298D4" strokeWidth="1" fill="none" />
-          <circle cx="600" cy="220" r="4" fill="#2298D4" className="opacity-60" />
-          <circle cx="750" cy="380" r="3" fill="#0B7F3A" className="opacity-60" />
-        </svg>
+        {hasImage ? (
+          <>
+            {/* Desktop image */}
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={backgroundImageUrl}
+              alt={altText || title}
+              className={`absolute inset-0 w-full h-full object-cover ${mobileImageUrl ? "hidden sm:block" : ""}`}
+            />
+            {mobileImageUrl && (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                src={mobileImageUrl}
+                alt={altText || title}
+                className="absolute inset-0 w-full h-full object-cover sm:hidden"
+              />
+            )}
+            {/* Dark overlay so text stays readable */}
+            <div className="absolute inset-0 bg-gradient-to-r from-[#071A3D]/80 via-[#071A3D]/60 to-[#071A3D]/30" />
+          </>
+        ) : (
+          <>
+            <div className="absolute inset-0 bg-gradient-to-br from-[#071A3D] via-[#25468F] to-[#071A3D]" />
+            <div className="absolute inset-0 opacity-20"
+              style={{
+                backgroundImage: `radial-gradient(ellipse at 20% 50%, #2298D4 0%, transparent 60%),
+                                  radial-gradient(ellipse at 80% 20%, #0B7F3A 0%, transparent 50%),
+                                  radial-gradient(ellipse at 60% 80%, #25468F 0%, transparent 60%)`,
+              }}
+            />
+            {/* Fiber lines */}
+            <svg className="absolute inset-0 w-full h-full opacity-10" viewBox="0 0 1200 640" preserveAspectRatio="xMidYMid slice">
+              <path d="M0,200 Q300,100 600,220 T1200,180" stroke="#2298D4" strokeWidth="2" fill="none" />
+              <path d="M0,350 Q400,250 700,380 T1200,320" stroke="#0B7F3A" strokeWidth="1.5" fill="none" />
+              <path d="M0,480 Q350,400 650,500 T1200,460" stroke="#2298D4" strokeWidth="1" fill="none" />
+              <circle cx="600" cy="220" r="4" fill="#2298D4" className="opacity-60" />
+              <circle cx="750" cy="380" r="3" fill="#0B7F3A" className="opacity-60" />
+            </svg>
+          </>
+        )}
       </div>
 
       <div className="container-custom relative z-10 py-20 lg:py-28">
@@ -79,8 +111,8 @@ export default function HeroSection({
             </div>
           </div>
 
-          {/* Right Visual */}
-          <div className="hidden lg:flex items-center justify-center">
+          {/* Right Visual — hidden when a real banner image fills the background */}
+          <div className={`items-center justify-center ${hasImage ? "hidden" : "hidden lg:flex"}`}>
             <div className="relative w-full max-w-md">
               {/* Glowing card */}
               <div className="relative rounded-3xl overflow-hidden border border-white/20 shadow-2xl"
