@@ -3,10 +3,11 @@ import Credentials from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
 import { prisma } from "./prisma";
 
-// Derive a stable secret from the DB URL as a last resort.
-// worldfiber_POSTGRES_PRISMA_URL is always injected by Vercel Postgres,
-// so this works without any manual env var setup.
-// Set NEXTAUTH_SECRET explicitly in Vercel to override.
+const DEFAULT_ADMIN_EMAIL = "admin@worldfibernet.net.np";
+const DEFAULT_ADMIN_PASSWORD = "ChangeMe123!";
+
+// Derive a stable JWT secret from the DB URL so sessions work on Vercel
+// even before NEXTAUTH_SECRET is manually configured.
 function resolveSecret(): string {
   return (
     process.env.NEXTAUTH_SECRET ||
@@ -16,6 +17,26 @@ function resolveSecret(): string {
     (process.env.POSTGRES_URL ?? "").slice(-48) ||
     "wfn-fallback-secret-set-NEXTAUTH_SECRET-in-vercel"
   );
+}
+
+async function ensureAdminExists(): Promise<void> {
+  const any = await prisma.user.findFirst({
+    where: { role: "SUPER_ADMIN" },
+    select: { id: true },
+  });
+  if (any) return;
+
+  const hash = await bcrypt.hash(DEFAULT_ADMIN_PASSWORD, 12);
+  await prisma.user.create({
+    data: {
+      email: DEFAULT_ADMIN_EMAIL,
+      password: hash,
+      name: "Super Admin",
+      role: "SUPER_ADMIN",
+      isActive: true,
+    },
+  });
+  console.log("[wfn] Admin user created on first login attempt.");
 }
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
@@ -28,6 +49,9 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       },
       async authorize(credentials) {
         if (!credentials?.email || !credentials?.password) return null;
+
+        // First-run: create the admin user if the database is empty.
+        await ensureAdminExists();
 
         const user = await prisma.user.findUnique({
           where: { email: credentials.email as string },
