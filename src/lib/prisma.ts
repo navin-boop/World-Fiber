@@ -3,18 +3,19 @@ import { PrismaPg } from "@prisma/adapter-pg";
 import pg from "pg";
 import { resolveDatabaseUrl } from "./env";
 
+// Supabase's connection pooler serves a certificate chain that pg v8 rejects
+// when rejectUnauthorized defaults to true, even if ssl:{rejectUnauthorized:false}
+// is passed in PoolConfig — because pg re-applies sslmode=require from the URL
+// and overwrites that setting. Setting NODE_TLS_REJECT_UNAUTHORIZED=0 at the
+// process level is the standard fix for Supabase + pg in serverless environments.
+if (process.env.NODE_ENV === "production") {
+  process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
+}
+
 function createPrismaClient() {
   const connectionString = resolveDatabaseUrl();
 
-  // Create the pg.Pool ourselves so we can override SSL settings explicitly.
-  // Passing { connectionString, ssl } as PoolConfig lets the URL parser
-  // re-apply sslmode=require which then overrides our rejectUnauthorized:false.
-  // Passing a pre-built Pool instance bypasses that re-parsing entirely.
-  const pool = new pg.Pool({
-    connectionString,
-    ssl: { rejectUnauthorized: false },
-  });
-
+  const pool = new pg.Pool({ connectionString });
   const adapter = new PrismaPg(pool);
   return new PrismaClient({ adapter });
 }
