@@ -3,6 +3,21 @@ import Credentials from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
 import { prisma } from "./prisma";
 
+// Derive a stable secret from the DB URL as a last resort.
+// worldfiber_POSTGRES_PRISMA_URL is always injected by Vercel Postgres,
+// so this works without any manual env var setup.
+// Set NEXTAUTH_SECRET explicitly in Vercel to override.
+function resolveSecret(): string {
+  return (
+    process.env.NEXTAUTH_SECRET ||
+    process.env.AUTH_SECRET ||
+    (process.env.worldfiber_POSTGRES_PRISMA_URL ?? "").slice(-48) ||
+    (process.env.worldfiber_POSTGRES_URL ?? "").slice(-48) ||
+    (process.env.POSTGRES_URL ?? "").slice(-48) ||
+    "wfn-fallback-secret-set-NEXTAUTH_SECRET-in-vercel"
+  );
+}
+
 export const { handlers, auth, signIn, signOut } = NextAuth({
   providers: [
     Credentials({
@@ -59,10 +74,6 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     strategy: "jwt",
     maxAge: 24 * 60 * 60,
   },
-  // Required for Vercel and other hosted environments so NextAuth
-  // accepts session tokens issued from any hostname (*.vercel.app etc.)
   trustHost: true,
-  secret:
-    process.env.NEXTAUTH_SECRET ||
-    process.env.AUTH_SECRET,
+  secret: resolveSecret(),
 });
