@@ -7,15 +7,13 @@ import { cn } from "@/lib/utils";
 import LangToggle from "@/components/LangToggle";
 
 const navLinks = [
-  { href: "/",        en: "Home",      ne: "गृहपृष्ठ" },
-  { href: "/about",   en: "About",     ne: "हाम्रोबारे" },
-  { href: "/services",en: "Services",  ne: "सेवाहरू" },
-  { href: "/packages",en: "Packages",  ne: "प्याकेजहरू" },
-  { href: "/iptv",    en: "IPTV",      ne: "आईपीटीभी" },
-  { href: "/recharge",en: "Recharge",  ne: "रिचार्ज" },
-  { href: "/offers",  en: "Offers",    ne: "अफरहरू" },
-  { href: "/faq",     en: "FAQ",       ne: "प्रश्नोत्तर" },
-  { href: "/contact", en: "Contact",   ne: "सम्पर्क" },
+  { href: "/",         en: "Home",     ne: "गृहपृष्ठ" },
+  { href: "/packages", en: "Packages", ne: "प्याकेजहरू" },
+  { href: "/iptv",     en: "IPTV",     ne: "आईपीटीभी" },
+  { href: "/recharge", en: "Recharge", ne: "रिचार्ज" },
+  { href: "/offers",   en: "Offers",   ne: "अफरहरू" },
+  { href: "/support",  en: "Support",  ne: "सहायता" },
+  { href: "/contact",  en: "Contact",  ne: "सम्पर्क" },
 ];
 
 interface HeaderProps {
