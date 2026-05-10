@@ -21,7 +21,8 @@ interface Banner {
 
 const placements = [
   "HOMEPAGE_HERO", "HOMEPAGE_PROMO", "HOMEPAGE_FULLWIDTH", "PACKAGES_HERO",
-  "IPTV_HERO", "RECHARGE_HERO", "OFFERS_PAGE", "FOOTER_PROMO",
+  "IPTV_HERO", "RECHARGE_HERO", "OFFERS_PAGE_BANNER", "OFFERS_SECTION_BANNER",
+  "CONTACT_OFFICE_BANNER", "FOOTER_PROMO",
 ];
 
 const emptyForm = {
@@ -71,7 +72,6 @@ export default function BannersAdminPage() {
       const data = await res.json();
       if (data.success) setBanners(data.data);
       else {
-        // Fallback: fetch all banners without filter
         const r2 = await fetch("/api/banners");
         const d2 = await r2.json();
         if (d2.success) setBanners(d2.data);
@@ -188,7 +188,6 @@ export default function BannersAdminPage() {
                   {placements.map(p => <option key={p} value={p}>{p}</option>)}
                 </select>
               </div>
-              {/* Desktop Image */}
               <div>
                 <label className="block text-xs font-semibold text-gray-600 mb-1">Desktop Image</label>
                 <div className="flex gap-2">
@@ -212,8 +211,6 @@ export default function BannersAdminPage() {
                   </div>
                 )}
               </div>
-
-              {/* Mobile Image */}
               <div>
                 <label className="block text-xs font-semibold text-gray-600 mb-1">Mobile Image <span className="text-gray-400 font-normal">(optional)</span></label>
                 <div className="flex gap-2">
