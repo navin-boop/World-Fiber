@@ -18,11 +18,15 @@ import {
   Home,
 } from "lucide-react";
 
-export const metadata = {
-  title: "About Us | World Fiber Net Pvt. Ltd.",
-  description:
-    "Learn about World Fiber Net Pvt. Ltd. — Nepal's trusted FTTH fiber internet and IPTV provider. Our mission, vision, team, and coverage across Nepal.",
-};
+import { getSettings } from "@/lib/settings";
+
+export async function generateMetadata() {
+  const s = await getSettings();
+  return {
+    title: s.seo_about_title || "About Us | World Fiber Net Pvt. Ltd.",
+    description: s.seo_about_desc || "Learn about World Fiber Net Pvt. Ltd. — Nepal's trusted FTTH fiber internet and IPTV provider. Our mission, vision, team, and coverage across Nepal.",
+  };
+}
 
 const stats = [
   { value: "10,000+", label: "Happy Customers", icon: Users, color: "text-[#25468F]", bg: "bg-blue-50" },

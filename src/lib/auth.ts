@@ -3,6 +3,40 @@ import Credentials from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
 import { prisma } from "./prisma";
 
+const DEFAULT_ADMIN_EMAIL = "admin@worldfibernet.net.np";
+const DEFAULT_ADMIN_PASSWORD = "ChangeMe123!";
+
+function resolveSecret(): string {
+  return (
+    process.env.NEXTAUTH_SECRET ||
+    process.env.AUTH_SECRET ||
+    (process.env.worldfiber_POSTGRES_PRISMA_URL ?? "").slice(-48) ||
+    (process.env.worldfiber_POSTGRES_URL ?? "").slice(-48) ||
+    (process.env.POSTGRES_URL ?? "").slice(-48) ||
+    "wfn-fallback-secret-set-NEXTAUTH_SECRET-in-vercel"
+  );
+}
+
+async function ensureAdminExists(): Promise<void> {
+  const any = await prisma.user.findFirst({
+    where: { role: "SUPER_ADMIN" },
+    select: { id: true },
+  });
+  if (any) return;
+
+  const hash = await bcrypt.hash(DEFAULT_ADMIN_PASSWORD, 12);
+  await prisma.user.create({
+    data: {
+      email: DEFAULT_ADMIN_EMAIL,
+      password: hash,
+      name: "Super Admin",
+      role: "SUPER_ADMIN",
+      isActive: true,
+    },
+  });
+  console.log("[wfn] Admin user created on first login.");
+}
+
 export const { handlers, auth, signIn, signOut } = NextAuth({
   providers: [
     Credentials({
@@ -14,25 +48,38 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       async authorize(credentials) {
         if (!credentials?.email || !credentials?.password) return null;
 
-        const user = await prisma.user.findUnique({
-          where: { email: credentials.email as string },
-        });
+        try {
+          await ensureAdminExists();
+        } catch (err) {
+          console.error("[wfn] ensureAdminExists failed:", err);
+          // DB unreachable — throw so NextAuth surfaces the real error
+          throw new Error("Database connection failed. Check server logs.");
+        }
 
-        if (!user || !user.isActive) return null;
+        try {
+          const user = await prisma.user.findUnique({
+            where: { email: credentials.email as string },
+          });
 
-        const isValid = await bcrypt.compare(
-          credentials.password as string,
-          user.password
-        );
+          if (!user || !user.isActive) return null;
 
-        if (!isValid) return null;
+          const isValid = await bcrypt.compare(
+            credentials.password as string,
+            user.password
+          );
 
-        return {
-          id: user.id,
-          email: user.email,
-          name: user.name,
-          role: user.role,
-        };
+          if (!isValid) return null;
+
+          return {
+            id: user.id,
+            email: user.email,
+            name: user.name,
+            role: user.role,
+          };
+        } catch (err) {
+          console.error("[wfn] authorize query failed:", err);
+          throw new Error("Database error during login.");
+        }
       },
     }),
   ],
@@ -57,7 +104,8 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   },
   session: {
     strategy: "jwt",
-    maxAge: 24 * 60 * 60, // 24 hours
+    maxAge: 24 * 60 * 60,
   },
-  secret: process.env.NEXTAUTH_SECRET,
+  trustHost: true,
+  secret: resolveSecret(),
 });

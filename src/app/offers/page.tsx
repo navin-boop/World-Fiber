@@ -2,13 +2,17 @@ import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import { ArrowRight, Tag, Clock, Zap, Star } from "lucide-react";
 
-export const metadata = {
-  title: "Offers & Promotions | World Fiber Net Pvt. Ltd.",
-  description:
-    "Discover the latest offers, deals, and promotions from World Fiber Net. Save on fiber internet and IPTV packages across Nepal.",
-};
+import { getSettings } from "@/lib/settings";
 
-export const revalidate = 300; // revalidate every 5 minutes
+export async function generateMetadata() {
+  const s = await getSettings();
+  return {
+    title: s.seo_offers_title || "Offers & Promotions | World Fiber Net Pvt. Ltd.",
+    description: s.seo_offers_desc || "Discover the latest offers, deals, and promotions from World Fiber Net. Save on fiber internet and IPTV packages across Nepal.",
+  };
+}
+
+export const revalidate = 300;
 
 const fallbackOffers = [
   {
@@ -100,11 +104,8 @@ function OfferCard({
 
   return (
     <div className="group bg-white border border-gray-100 rounded-3xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 card-hover flex flex-col">
-      {/* Card Top Gradient Bar */}
       <div className={`bg-gradient-to-r ${gradient} h-2`} />
-
       <div className="p-7 flex flex-col flex-1">
-        {/* Badge Row */}
         <div className="flex items-center justify-between mb-5">
           {badge ? (
             <span className={`text-xs font-bold px-3 py-1.5 rounded-full ${badgeColor}`}>{badge}</span>
@@ -121,25 +122,17 @@ function OfferCard({
             </span>
           )}
         </div>
-
-        {/* Icon */}
         <div className={`w-12 h-12 bg-gradient-to-br ${gradient} rounded-2xl flex items-center justify-center mb-5`}>
           <Star size={20} className="text-white fill-white/50" />
         </div>
-
-        {/* Content */}
         <h3 className="text-xl font-extrabold text-gray-900 mb-3">{offer.title}</h3>
         <p className="text-gray-600 leading-relaxed text-sm flex-1">{offer.description}</p>
-
-        {/* End Date */}
         {hasEndDate && (
           <div className="mt-4 flex items-center gap-2 text-xs text-gray-400">
             <Clock size={13} />
             <span>Offer ends: {new Date(offer.endDate!).toLocaleDateString("en-NP", { day: "numeric", month: "long", year: "numeric" })}</span>
           </div>
         )}
-
-        {/* CTA */}
         <div className="mt-6">
           <Link
             href={offer.ctaLink || "/contact"}
@@ -273,7 +266,6 @@ export default async function OffersPage() {
                 : "Explore our ongoing promotions and save big on fiber internet and IPTV packages."}
             </p>
           </div>
-
           <div className="grid sm:grid-cols-2 lg:grid-cols-2 gap-7">
             {hasOffers
               ? offers.map((offer, i) => (

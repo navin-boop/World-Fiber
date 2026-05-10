@@ -13,11 +13,15 @@ import {
   Package,
 } from "lucide-react";
 
-export const metadata = {
-  title: "Our Services | World Fiber Net Pvt. Ltd.",
-  description:
-    "Explore World Fiber Net's full range of services: FTTH Home Fiber, Corporate Fiber, IPTV (Net TV & Sky TV), Internet+IPTV Combo, and Local Installation & Support.",
-};
+import { getSettings } from "@/lib/settings";
+
+export async function generateMetadata() {
+  const s = await getSettings();
+  return {
+    title: s.seo_services_title || "Our Services | World Fiber Net Pvt. Ltd.",
+    description: s.seo_services_desc || "Explore World Fiber Net's full range of services: FTTH Home Fiber, Corporate Fiber, IPTV (Net TV & Sky TV), Internet+IPTV Combo, and Local Installation & Support.",
+  };
+}
 
 const services = [
   {

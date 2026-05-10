@@ -18,11 +18,15 @@ import {
   Star,
 } from "lucide-react";
 
-export const metadata = {
-  title: "IPTV — Net TV & Sky TV | World Fiber Net Pvt. Ltd.",
-  description:
-    "Enjoy premium IPTV with Net TV and Sky TV. Hundreds of live channels, sports, movies, on-demand content, and more — powered by World Fiber Net's fiber network.",
-};
+import { getSettings } from "@/lib/settings";
+
+export async function generateMetadata() {
+  const s = await getSettings();
+  return {
+    title: s.seo_iptv_title || "IPTV — Net TV & Sky TV | World Fiber Net Pvt. Ltd.",
+    description: s.seo_iptv_desc || "Enjoy premium IPTV with Net TV and Sky TV. Hundreds of live channels, sports, movies, on-demand content, and more — powered by World Fiber Net's fiber network.",
+  };
+}
 
 const entertainmentCategories = [
   { icon: Tv, label: "Live TV", count: "200+ Channels", color: "text-[#25468F]", bg: "bg-blue-50" },

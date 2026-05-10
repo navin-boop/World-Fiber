@@ -4,7 +4,6 @@ import {
   Smartphone,
   CreditCard,
   Building2,
-  Banknote,
   CheckCircle2,
   Phone,
   MessageCircle,
@@ -13,12 +12,17 @@ import {
   AlertCircle,
   Info,
 } from "lucide-react";
+import { getSettings } from "@/lib/settings";
 
-export const metadata = {
-  title: "Recharge & Bill Payment | World Fiber Net Pvt. Ltd.",
-  description:
-    "Pay your World Fiber Net bill easily via eSewa, Khalti, Mobile Banking, or Bank Transfer. Step-by-step payment guide for all methods.",
-};
+export async function generateMetadata() {
+  const s = await getSettings();
+  return {
+    title: s.seo_recharge_title || "Recharge & Bill Payment | World Fiber Net Pvt. Ltd.",
+    description:
+      s.seo_recharge_desc ||
+      "Pay your World Fiber Net bill easily via eSewa, Khalti, or Mobile Banking. Step-by-step payment guide for all methods.",
+  };
+}
 
 const paymentMethods = [
   {
@@ -31,13 +35,14 @@ const paymentMethods = [
     headerGradient: "from-[#0B7F3A] to-[#065a28]",
     badge: "Most Popular",
     badgeColor: "bg-white text-[#0B7F3A]",
+    imageKey: "recharge_esewa_image",
     steps: [
       "Open the eSewa app on your smartphone.",
       'Tap on "Pay" or navigate to "Utility Payment".',
       'Search for or select "World Fiber Net" from the service list.',
       "Enter your Customer ID or registered phone number.",
       "Verify the payment amount and your account details.",
-      'Enter your eSewa PIN or use biometric authentication.',
+      "Enter your eSewa PIN or use biometric authentication.",
       'Tap "Pay Now" to complete the transaction.',
       "Save or screenshot the payment receipt for your records.",
     ],
@@ -53,6 +58,7 @@ const paymentMethods = [
     headerGradient: "from-purple-600 to-purple-800",
     badge: "Recommended",
     badgeColor: "bg-white text-purple-600",
+    imageKey: "recharge_khalti_image",
     steps: [
       "Open the Khalti app or visit khalti.com.",
       'Tap "Pay" and search for "World Fiber Net".',
@@ -75,6 +81,7 @@ const paymentMethods = [
     headerGradient: "from-[#2298D4] to-[#1a78a8]",
     badge: "Universal",
     badgeColor: "bg-white text-[#2298D4]",
+    imageKey: "recharge_mobile_image",
     steps: [
       "Open your bank's mobile banking app (NIC Asia, Nabil, Rastriya Banijya, etc.).",
       'Navigate to "Fund Transfer" or "Utility Payment" section.',
@@ -87,31 +94,11 @@ const paymentMethods = [
     ],
     note: "Mobile banking transfers may take up to 4 hours on weekdays and longer on weekends.",
   },
-  {
-    id: "bank-transfer",
-    icon: Banknote,
-    title: "Bank Transfer / Counter",
-    subtitle: "Direct Bank Deposit",
-    iconBg: "bg-blue-50",
-    iconColor: "text-[#25468F]",
-    headerGradient: "from-[#25468F] to-[#071A3D]",
-    badge: "Traditional",
-    badgeColor: "bg-white text-[#25468F]",
-    steps: [
-      "Visit your nearest bank branch or use internet banking.",
-      "Initiate a fund transfer to the World Fiber Net account.",
-      "Account Name: World Fiber Net Pvt. Ltd.",
-      "Account Number: [Contact support for bank details]",
-      "Bank: [Contact support for bank name]",
-      "In the remarks/narration, include your Customer ID or registered phone number.",
-      "Complete the transfer and retain the bank receipt/voucher.",
-      "Send a photo of the receipt via WhatsApp or email to our billing team.",
-    ],
-    note: "Bank transfers may take 1–3 business days to be reflected. Always include your Customer ID in the remarks.",
-  },
 ];
 
-export default function RechargePage() {
+export default async function RechargePage() {
+  const settings = await getSettings();
+
   return (
     <>
       {/* Hero Section */}
@@ -128,14 +115,14 @@ export default function RechargePage() {
         <div className="container-custom relative z-10 py-16 text-center text-white">
           <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm border border-white/20 rounded-full px-4 py-1.5 mb-6">
             <CreditCard size={14} className="text-[#2298D4]" />
-            <span className="text-sm font-medium text-blue-100">Simple & Secure Bill Payment</span>
+            <span className="text-sm font-medium text-blue-100">Simple &amp; Secure Bill Payment</span>
           </div>
           <h1 className="text-4xl lg:text-6xl font-extrabold leading-tight mb-6">
             Recharge &amp;{" "}
             <span className="text-[#2298D4]">Bill Payment</span>
           </h1>
           <p className="text-blue-100 text-lg lg:text-xl leading-relaxed max-w-2xl mx-auto mb-8">
-            Pay your World Fiber Net bill quickly and securely using any of our supported payment methods. No queue, no hassle.
+            Pay your World Fiber Net bill quickly and securely using any of our digital payment methods. No queue, no hassle.
           </p>
           <div className="flex flex-wrap justify-center gap-3">
             {paymentMethods.map((m) => (
@@ -175,60 +162,74 @@ export default function RechargePage() {
               How to Pay Your Bill
             </h2>
             <p className="text-gray-500 text-lg max-w-2xl mx-auto">
-              Choose your preferred payment method and follow the step-by-step guide below to complete your recharge.
+              Choose your preferred digital payment method and follow the step-by-step guide below.
             </p>
           </div>
 
-          <div className="grid lg:grid-cols-2 gap-8">
-            {paymentMethods.map((method) => (
-              <div
-                key={method.id}
-                id={method.id}
-                className="bg-white border border-gray-100 rounded-3xl overflow-hidden shadow-sm hover:shadow-md transition-shadow scroll-mt-24"
-              >
-                {/* Card Header */}
-                <div className={`bg-gradient-to-r ${method.headerGradient} p-6`}>
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-4">
-                      <div className={`w-14 h-14 ${method.iconBg} rounded-2xl flex items-center justify-center`}>
-                        <method.icon size={26} className={method.iconColor} />
+          <div className="grid lg:grid-cols-2 gap-8 xl:gap-10">
+            {paymentMethods.map((method) => {
+              const imageUrl = settings[method.imageKey as keyof typeof settings];
+              return (
+                <div
+                  key={method.id}
+                  id={method.id}
+                  className="bg-white border border-gray-100 rounded-3xl overflow-hidden shadow-sm hover:shadow-md transition-shadow scroll-mt-24"
+                >
+                  {/* Card Header */}
+                  <div className={`bg-gradient-to-r ${method.headerGradient} p-6`}>
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-4">
+                        <div className={`w-14 h-14 ${method.iconBg} rounded-2xl flex items-center justify-center`}>
+                          <method.icon size={26} className={method.iconColor} />
+                        </div>
+                        <div>
+                          <h3 className="text-xl font-extrabold text-white">{method.title}</h3>
+                          <p className="text-white/70 text-sm">{method.subtitle}</p>
+                        </div>
                       </div>
-                      <div>
-                        <h3 className="text-xl font-extrabold text-white">{method.title}</h3>
-                        <p className="text-white/70 text-sm">{method.subtitle}</p>
-                      </div>
+                      <span className={`text-xs font-bold px-3 py-1.5 rounded-full ${method.badgeColor}`}>
+                        {method.badge}
+                      </span>
                     </div>
-                    <span className={`text-xs font-bold px-3 py-1.5 rounded-full ${method.badgeColor}`}>
-                      {method.badge}
-                    </span>
+                  </div>
+
+                  {/* Steps */}
+                  <div className="p-6 lg:p-8">
+                    <h4 className="font-bold text-gray-900 mb-5 flex items-center gap-2">
+                      <CheckCircle2 size={16} className="text-[#0B7F3A]" />
+                      Step-by-Step Guide
+                    </h4>
+                    <ol className="space-y-3">
+                      {method.steps.map((step, i) => (
+                        <li key={i} className="flex items-start gap-3">
+                          <span className="flex-shrink-0 w-6 h-6 bg-blue-50 text-[#25468F] text-xs font-bold rounded-full flex items-center justify-center">
+                            {i + 1}
+                          </span>
+                          <span className="text-gray-600 text-sm leading-relaxed pt-0.5">{step}</span>
+                        </li>
+                      ))}
+                    </ol>
+
+                    {imageUrl && (
+                      <div className="mt-6 rounded-2xl overflow-hidden border border-gray-100 bg-gray-50">
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img
+                          src={imageUrl}
+                          alt={`How to pay via ${method.title}`}
+                          className="w-full object-cover"
+                        />
+                      </div>
+                    )}
+
+                    {/* Note */}
+                    <div className="mt-5 flex items-start gap-2.5 bg-blue-50 border border-blue-100 rounded-xl p-4">
+                      <Info size={15} className="text-[#25468F] flex-shrink-0 mt-0.5" />
+                      <p className="text-[#25468F] text-xs leading-relaxed">{method.note}</p>
+                    </div>
                   </div>
                 </div>
-
-                {/* Steps */}
-                <div className="p-6 lg:p-8">
-                  <h4 className="font-bold text-gray-900 mb-5 flex items-center gap-2">
-                    <CheckCircle2 size={16} className="text-[#0B7F3A]" />
-                    Step-by-Step Guide
-                  </h4>
-                  <ol className="space-y-3">
-                    {method.steps.map((step, i) => (
-                      <li key={i} className="flex items-start gap-3">
-                        <span className="flex-shrink-0 w-6 h-6 bg-blue-50 text-[#25468F] text-xs font-bold rounded-full flex items-center justify-center">
-                          {i + 1}
-                        </span>
-                        <span className="text-gray-600 text-sm leading-relaxed pt-0.5">{step}</span>
-                      </li>
-                    ))}
-                  </ol>
-
-                  {/* Note */}
-                  <div className="mt-5 flex items-start gap-2.5 bg-blue-50 border border-blue-100 rounded-xl p-4">
-                    <Info size={15} className="text-[#25468F] flex-shrink-0 mt-0.5" />
-                    <p className="text-[#25468F] text-xs leading-relaxed">{method.note}</p>
-                  </div>
-                </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       </section>
@@ -238,7 +239,7 @@ export default function RechargePage() {
         <div className="container-custom">
           <div className="text-center mb-10">
             <p className="text-[#0B7F3A] font-bold text-sm uppercase tracking-widest mb-3">Tips</p>
-            <h2 className="text-2xl lg:text-3xl font-extrabold text-gray-900">Payment Tips & Reminders</h2>
+            <h2 className="text-2xl lg:text-3xl font-extrabold text-gray-900">Payment Tips &amp; Reminders</h2>
           </div>
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
             {[
@@ -289,16 +290,14 @@ export default function RechargePage() {
           <div className="bg-gradient-to-br from-[#25468F] to-[#071A3D] rounded-3xl p-10 lg:p-14">
             <div className="grid lg:grid-cols-2 gap-10 items-center">
               <div>
-                <h2 className="text-3xl font-extrabold text-white mb-4">
-                  Need Billing Support?
-                </h2>
+                <h2 className="text-3xl font-extrabold text-white mb-4">Need Billing Support?</h2>
                 <p className="text-blue-200 text-base leading-relaxed mb-6">
-                  If you have any issues with your payment, billing queries, or need help with your account, our team is ready to assist you through multiple channels.
+                  If you have any issues with your payment, billing queries, or need help with your account, our team is ready to assist you.
                 </p>
                 <div className="space-y-4">
                   {[
-                    { icon: Phone, label: "Call Us", detail: "+977-1-XXXXXXX", sub: "Mon–Sat, 9 AM – 7 PM" },
-                    { icon: MessageCircle, label: "WhatsApp / Viber", detail: "+977-98XXXXXXXX", sub: "Quick response guaranteed" },
+                    { icon: Phone, label: "Call Us", detail: settings.phone || "+977-1-XXXXXXX", sub: settings.office_hours || "Mon–Sat, 9 AM – 7 PM" },
+                    { icon: MessageCircle, label: "WhatsApp / Viber", detail: `+977-${settings.whatsapp_number || "98XXXXXXXX"}`, sub: "Quick response guaranteed" },
                     { icon: Ticket, label: "Support Ticket", detail: "Create a billing ticket", sub: "Tracked & resolved within 24 hrs" },
                   ].map((contact) => (
                     <div key={contact.label} className="flex items-center gap-4 bg-white/10 rounded-2xl p-4">
@@ -318,20 +317,14 @@ export default function RechargePage() {
                 <div className="bg-white/10 border border-white/20 rounded-2xl p-6 text-center">
                   <h3 className="text-white font-bold text-lg mb-2">Can&apos;t find your Customer ID?</h3>
                   <p className="text-blue-200 text-sm mb-4">Your Customer ID is on your welcome email or installation receipt. Our support team can also help you retrieve it.</p>
-                  <Link
-                    href="/contact"
-                    className="inline-flex items-center gap-2 bg-white text-[#25468F] font-bold px-5 py-3 rounded-xl hover:bg-blue-50 transition-all text-sm"
-                  >
+                  <Link href="/contact" className="inline-flex items-center gap-2 bg-white text-[#25468F] font-bold px-5 py-3 rounded-xl hover:bg-blue-50 transition-all text-sm">
                     Contact Support <ArrowRight size={16} />
                   </Link>
                 </div>
                 <div className="bg-white/10 border border-white/20 rounded-2xl p-6 text-center">
                   <h3 className="text-white font-bold text-lg mb-2">Raise a Billing Ticket</h3>
                   <p className="text-blue-200 text-sm mb-4">For complex billing issues, create a support ticket and our billing team will resolve it within 24 hours.</p>
-                  <Link
-                    href="/support-ticket"
-                    className="inline-flex items-center gap-2 bg-[#0B7F3A] text-white font-bold px-5 py-3 rounded-xl hover:bg-[#065a28] transition-all text-sm"
-                  >
+                  <Link href="/support-ticket" className="inline-flex items-center gap-2 bg-[#0B7F3A] text-white font-bold px-5 py-3 rounded-xl hover:bg-[#065a28] transition-all text-sm">
                     Create Ticket <ArrowRight size={16} />
                   </Link>
                 </div>

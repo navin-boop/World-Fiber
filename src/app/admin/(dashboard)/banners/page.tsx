@@ -1,8 +1,8 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import AdminHeader from "@/components/admin/AdminHeader";
-import { Plus, Edit, Trash2, CheckCircle, XCircle, Loader2 } from "lucide-react";
+import { Plus, Edit, Trash2, CheckCircle, XCircle, Loader2, Upload, X } from "lucide-react";
 import toast from "react-hot-toast";
 
 interface Banner {
@@ -38,6 +38,32 @@ export default function BannersAdminPage() {
   const [editing, setEditing] = useState<Banner | null>(null);
   const [form, setForm] = useState(emptyForm);
   const [saving, setSaving] = useState(false);
+  const [uploadingDesktop, setUploadingDesktop] = useState(false);
+  const [uploadingMobile, setUploadingMobile] = useState(false);
+  const desktopFileRef = useRef<HTMLInputElement>(null);
+  const mobileFileRef = useRef<HTMLInputElement>(null);
+
+  const uploadImage = async (file: File, field: "desktopImageUrl" | "mobileImageUrl") => {
+    const setter = field === "desktopImageUrl" ? setUploadingDesktop : setUploadingMobile;
+    setter(true);
+    try {
+      const fd = new FormData();
+      fd.append("file", file);
+      fd.append("altText", form.altText || form.title);
+      const res = await fetch("/api/media", { method: "POST", body: fd });
+      const data = await res.json();
+      if (data.success) {
+        setForm(f => ({ ...f, [field]: data.url }));
+        toast.success("Image uploaded");
+      } else {
+        toast.error(data.message || "Upload failed");
+      }
+    } catch {
+      toast.error("Upload failed");
+    } finally {
+      setter(false);
+    }
+  };
 
   const load = async () => {
     try {
@@ -114,7 +140,19 @@ export default function BannersAdminPage() {
               <tbody className="divide-y divide-gray-50">
                 {banners.map(b => (
                   <tr key={b.id} className="hover:bg-gray-50">
-                    <td className="px-4 py-3"><div className="font-semibold text-sm text-gray-800">{b.title}</div><div className="text-xs text-gray-400 truncate max-w-xs">{b.subtitle}</div></td>
+                    <td className="px-4 py-3">
+                      <div className="flex items-center gap-3">
+                        {b.desktopImageUrl ? (
+                          // eslint-disable-next-line @next/next/no-img-element
+                          <img src={b.desktopImageUrl} alt={b.altText || b.title} className="w-14 h-9 rounded object-cover border border-gray-200 flex-shrink-0" />
+                        ) : (
+                          <div className="w-14 h-9 rounded border border-dashed border-gray-300 bg-gray-50 flex items-center justify-center flex-shrink-0">
+                            <Upload size={12} className="text-gray-300" />
+                          </div>
+                        )}
+                        <div><div className="font-semibold text-sm text-gray-800">{b.title}</div><div className="text-xs text-gray-400 truncate max-w-xs">{b.subtitle}</div></div>
+                      </div>
+                    </td>
                     <td className="px-4 py-3 hidden md:table-cell"><span className="text-xs bg-purple-50 text-purple-700 px-2 py-1 rounded-full">{b.placement}</span></td>
                     <td className="px-4 py-3 hidden sm:table-cell text-xs text-gray-600">{b.ctaText}</td>
                     <td className="px-4 py-3">
@@ -150,8 +188,55 @@ export default function BannersAdminPage() {
                   {placements.map(p => <option key={p} value={p}>{p}</option>)}
                 </select>
               </div>
-              <div><label className="block text-xs font-semibold text-gray-600 mb-1">Desktop Image URL</label><input className={ic} value={form.desktopImageUrl} onChange={e => setForm({...form, desktopImageUrl: e.target.value})} placeholder="/uploads/image.jpg" /></div>
-              <div><label className="block text-xs font-semibold text-gray-600 mb-1">Mobile Image URL</label><input className={ic} value={form.mobileImageUrl} onChange={e => setForm({...form, mobileImageUrl: e.target.value})} /></div>
+              {/* Desktop Image */}
+              <div>
+                <label className="block text-xs font-semibold text-gray-600 mb-1">Desktop Image</label>
+                <div className="flex gap-2">
+                  <input className={ic} value={form.desktopImageUrl} onChange={e => setForm({...form, desktopImageUrl: e.target.value})} placeholder="Paste URL or upload →" />
+                  <button type="button" onClick={() => desktopFileRef.current?.click()} disabled={uploadingDesktop}
+                    className="flex-shrink-0 flex items-center gap-1.5 px-3 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 text-xs font-semibold rounded-lg border border-gray-200 disabled:opacity-60">
+                    {uploadingDesktop ? <Loader2 size={13} className="animate-spin" /> : <Upload size={13} />} Upload
+                  </button>
+                  {form.desktopImageUrl && (
+                    <button type="button" onClick={() => setForm(f => ({ ...f, desktopImageUrl: "" }))} className="flex-shrink-0 p-2 text-red-400 hover:text-red-600">
+                      <X size={14} />
+                    </button>
+                  )}
+                </div>
+                <input ref={desktopFileRef} type="file" accept="image/*" className="hidden"
+                  onChange={e => { const f = e.target.files?.[0]; if (f) uploadImage(f, "desktopImageUrl"); e.target.value = ""; }} />
+                {form.desktopImageUrl && (
+                  <div className="mt-2 rounded-lg overflow-hidden border border-gray-200 h-24 bg-gray-50">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src={form.desktopImageUrl} alt="Desktop preview" className="w-full h-full object-cover" />
+                  </div>
+                )}
+              </div>
+
+              {/* Mobile Image */}
+              <div>
+                <label className="block text-xs font-semibold text-gray-600 mb-1">Mobile Image <span className="text-gray-400 font-normal">(optional)</span></label>
+                <div className="flex gap-2">
+                  <input className={ic} value={form.mobileImageUrl} onChange={e => setForm({...form, mobileImageUrl: e.target.value})} placeholder="Paste URL or upload →" />
+                  <button type="button" onClick={() => mobileFileRef.current?.click()} disabled={uploadingMobile}
+                    className="flex-shrink-0 flex items-center gap-1.5 px-3 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 text-xs font-semibold rounded-lg border border-gray-200 disabled:opacity-60">
+                    {uploadingMobile ? <Loader2 size={13} className="animate-spin" /> : <Upload size={13} />} Upload
+                  </button>
+                  {form.mobileImageUrl && (
+                    <button type="button" onClick={() => setForm(f => ({ ...f, mobileImageUrl: "" }))} className="flex-shrink-0 p-2 text-red-400 hover:text-red-600">
+                      <X size={14} />
+                    </button>
+                  )}
+                </div>
+                <input ref={mobileFileRef} type="file" accept="image/*" className="hidden"
+                  onChange={e => { const f = e.target.files?.[0]; if (f) uploadImage(f, "mobileImageUrl"); e.target.value = ""; }} />
+                {form.mobileImageUrl && (
+                  <div className="mt-2 rounded-lg overflow-hidden border border-gray-200 h-24 bg-gray-50">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src={form.mobileImageUrl} alt="Mobile preview" className="w-full h-full object-cover" />
+                  </div>
+                )}
+              </div>
               <div className="grid grid-cols-2 gap-3">
                 <div><label className="block text-xs font-semibold text-gray-600 mb-1">CTA Text</label><input className={ic} value={form.ctaText} onChange={e => setForm({...form, ctaText: e.target.value})} /></div>
                 <div><label className="block text-xs font-semibold text-gray-600 mb-1">CTA Link</label><input className={ic} value={form.ctaLink} onChange={e => setForm({...form, ctaLink: e.target.value})} /></div>
