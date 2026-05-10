@@ -6,11 +6,13 @@ import { Loader2, Save, Upload, X, Info } from "lucide-react";
 import toast from "react-hot-toast";
 
 interface Settings {
+  // General
   company_name: string;
   address: string;
   office_hours: string;
   coverage_areas: string;
   footer_text: string;
+  // Contact & Social
   phone: string;
   phone2: string;
   email: string;
@@ -20,19 +22,29 @@ interface Settings {
   instagram_url: string;
   youtube_url: string;
   linkedin_url: string;
+  // Live Chat
   whatsapp_number: string;
   viber_number: string;
   messenger_link: string;
   chat_active: string;
+  // Branding
   site_logo_url: string;
   site_favicon_url: string;
+  // Homepage hero
   hero_title: string;
   hero_subtitle: string;
+  // Recharge images
   recharge_esewa_image: string;
   recharge_khalti_image: string;
   recharge_mobile_image: string;
+  // Notifications
+  notification_email: string;
+  // Maps
+  google_maps_embed_url: string;
+  // Global SEO
   meta_title: string;
   meta_description: string;
+  // Per-page SEO
   seo_home_title: string;
   seo_home_desc: string;
   seo_about_title: string;
@@ -79,6 +91,8 @@ const defaultSettings: Settings = {
   recharge_esewa_image: "",
   recharge_khalti_image: "",
   recharge_mobile_image: "",
+  notification_email: "",
+  google_maps_embed_url: "",
   meta_title: "World Fiber Net - Fiber Internet & IPTV in Nepal",
   meta_description: "Experience ultra-fast FTTH fiber internet and IPTV services in Nepal.",
   seo_home_title: "",
@@ -104,13 +118,14 @@ const defaultSettings: Settings = {
 const ic = "w-full px-3 py-2 rounded-lg border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-[#25468F]";
 
 const tabs = [
-  { id: "general",  label: "⚙️ General",        desc: "Company info, address, office hours" },
-  { id: "branding", label: "🎨 Branding",        desc: "Logo, favicon, site identity" },
-  { id: "contact",  label: "📞 Contact & Social", desc: "Phone, email, social media links" },
-  { id: "chat",     label: "💬 Live Chat",        desc: "WhatsApp, Viber, Messenger widget" },
-  { id: "homepage", label: "🏠 Homepage",         desc: "Hero section text" },
-  { id: "recharge", label: "💳 Recharge Images",  desc: "How-to images for each payment method" },
-  { id: "seo",      label: "🔍 SEO",              desc: "Page titles and descriptions for search engines" },
+  { id: "general",       label: "⚙️ General",        desc: "Company info, address, office hours" },
+  { id: "branding",      label: "🎨 Branding",        desc: "Logo, favicon, site identity" },
+  { id: "contact",       label: "📞 Contact & Social", desc: "Phone, email, social media links" },
+  { id: "chat",          label: "💬 Live Chat",        desc: "WhatsApp, Viber, Messenger widget" },
+  { id: "notifications", label: "📧 Notifications",   desc: "Email forwarding for inquiries, tickets, and alerts" },
+  { id: "homepage",      label: "🏠 Homepage",         desc: "Hero section text" },
+  { id: "recharge",      label: "💳 Recharge Images",  desc: "How-to images for each payment method" },
+  { id: "seo",           label: "🔍 SEO",              desc: "Page titles and descriptions for search engines" },
 ];
 
 const seoPages = [
@@ -243,6 +258,7 @@ export default function SettingsAdminPage() {
             ))}
           </div>
 
+          {/* Tab description */}
           <div className="px-6 pt-4 pb-0">
             <p className="text-xs text-gray-400 flex items-center gap-1.5">
               <Info size={12} />
@@ -252,6 +268,7 @@ export default function SettingsAdminPage() {
 
           <div className="p-6 space-y-5 max-w-2xl">
 
+            {/* ── GENERAL ── */}
             {activeTab === "general" && (
               <>
                 <div>
@@ -277,6 +294,7 @@ export default function SettingsAdminPage() {
               </>
             )}
 
+            {/* ── BRANDING ── */}
             {activeTab === "branding" && (
               <>
                 <div className="p-4 bg-blue-50 rounded-xl border border-blue-100 text-xs text-blue-800 leading-relaxed">
@@ -299,6 +317,7 @@ export default function SettingsAdminPage() {
               </>
             )}
 
+            {/* ── CONTACT & SOCIAL ── */}
             {activeTab === "contact" && (
               <>
                 <div className="grid grid-cols-2 gap-4">
@@ -341,9 +360,17 @@ export default function SettingsAdminPage() {
                   <label className="block text-xs font-semibold text-gray-600 mb-1">LinkedIn URL</label>
                   <input className={ic} value={settings.linkedin_url} onChange={e => set("linkedin_url", e.target.value)} />
                 </div>
+                <hr className="border-gray-100" />
+                <p className="text-xs font-bold text-gray-500 uppercase tracking-wider">Maps</p>
+                <div>
+                  <label className="block text-xs font-semibold text-gray-600 mb-1">Google Maps Embed URL</label>
+                  <p className="text-xs text-gray-400 mb-2">Paste the iframe <code className="bg-gray-100 px-1 rounded">src</code> URL from Google Maps → Share → Embed a map. This appears on the Contact page.</p>
+                  <input className={ic} value={settings.google_maps_embed_url} onChange={e => set("google_maps_embed_url", e.target.value)} placeholder="https://www.google.com/maps/embed?pb=..." />
+                </div>
               </>
             )}
 
+            {/* ── LIVE CHAT ── */}
             {activeTab === "chat" && (
               <>
                 <div>
@@ -368,6 +395,36 @@ export default function SettingsAdminPage() {
               </>
             )}
 
+            {/* ── NOTIFICATIONS ── */}
+            {activeTab === "notifications" && (
+              <>
+                <div className="p-4 bg-amber-50 rounded-xl border border-amber-100 text-xs text-amber-800 leading-relaxed">
+                  <strong>How it works:</strong> All support ticket emails, contact form inquiries, and website notification alerts will be forwarded to this email address. Leave blank to disable email forwarding.
+                </div>
+                <div>
+                  <label className="block text-xs font-semibold text-gray-600 mb-1">Notification & Forwarding Email</label>
+                  <p className="text-xs text-gray-400 mb-2">Support tickets, inquiry form submissions, and system alerts will be sent to this address.</p>
+                  <input
+                    type="email"
+                    className={ic}
+                    value={settings.notification_email}
+                    onChange={e => set("notification_email", e.target.value)}
+                    placeholder="admin@worldfibernet.net.np"
+                  />
+                </div>
+                <div className="p-4 bg-blue-50 rounded-xl border border-blue-100 text-xs text-blue-800 space-y-1.5">
+                  <p className="font-bold">What gets forwarded to this email:</p>
+                  <ul className="list-disc list-inside space-y-1 text-blue-700">
+                    <li>New contact form inquiries from the website</li>
+                    <li>New connection requests submitted online</li>
+                    <li>Support ticket notifications</li>
+                    <li>System alerts and error notifications</li>
+                  </ul>
+                </div>
+              </>
+            )}
+
+            {/* ── HOMEPAGE ── */}
             {activeTab === "homepage" && (
               <>
                 <div>
@@ -382,6 +439,7 @@ export default function SettingsAdminPage() {
               </>
             )}
 
+            {/* ── RECHARGE IMAGES ── */}
             {activeTab === "recharge" && (
               <>
                 <div className="p-4 bg-green-50 rounded-xl border border-green-100 text-xs text-green-800 leading-relaxed">
@@ -411,6 +469,7 @@ export default function SettingsAdminPage() {
               </>
             )}
 
+            {/* ── SEO ── */}
             {activeTab === "seo" && (
               <>
                 <div className="p-4 bg-purple-50 rounded-xl border border-purple-100 text-xs text-purple-800 leading-relaxed">
@@ -461,6 +520,7 @@ export default function SettingsAdminPage() {
           </div>
         </div>
 
+        {/* Sticky save button at bottom for long forms */}
         <div className="mt-6 flex justify-end">
           <button
             onClick={handleSave}
