@@ -17,7 +17,38 @@ const navLinks = [
   { href: "/contact", label: "Contact" },
 ];
 
-export default function Header() {
+interface HeaderProps {
+  logoUrl?: string;
+}
+
+function Logo({ logoUrl }: { logoUrl?: string }) {
+  if (logoUrl) {
+    return (
+      /* eslint-disable-next-line @next/next/no-img-element */
+      <img src={logoUrl} alt="World Fiber Net" className="h-10 w-auto max-w-[160px] object-contain" />
+    );
+  }
+  return (
+    <div className="flex items-center gap-2">
+      <div className="relative">
+        <div className="w-9 h-9 rounded-full bg-gradient-to-br from-[#25468F] to-[#2298D4] flex items-center justify-center">
+          <span className="text-white font-bold text-sm">W</span>
+        </div>
+        <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full bg-[#0B7F3A]"></div>
+      </div>
+      <div className="leading-tight">
+        <div className="font-bold text-[#25468F] text-base leading-none">
+          W<span className="text-[#0B7F3A]">○</span>RLD
+        </div>
+        <div className="text-[#25468F] text-[10px] font-semibold tracking-wider leading-none">
+          Fiber Net
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export default function Header({ logoUrl }: HeaderProps) {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
 
@@ -40,22 +71,7 @@ export default function Header() {
         <div className="flex items-center justify-between h-16 lg:h-20">
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2 flex-shrink-0">
-            <div className="flex items-center gap-2">
-              <div className="relative">
-                <div className="w-9 h-9 rounded-full bg-gradient-to-br from-[#25468F] to-[#2298D4] flex items-center justify-center">
-                  <span className="text-white font-bold text-sm">W</span>
-                </div>
-                <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full bg-[#0B7F3A]"></div>
-              </div>
-              <div className="leading-tight">
-                <div className="font-bold text-[#25468F] text-base leading-none">
-                  W<span className="text-[#0B7F3A]">○</span>RLD
-                </div>
-                <div className="text-[#25468F] text-[10px] font-semibold tracking-wider leading-none">
-                  Fiber Net
-                </div>
-              </div>
-            </div>
+            <Logo logoUrl={logoUrl} />
           </Link>
 
           {/* Desktop Nav */}
