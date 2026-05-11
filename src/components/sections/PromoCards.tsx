@@ -3,11 +3,11 @@ import { ArrowRight } from "lucide-react";
 
 const promoCards = [
   {
-    badge: "New Connection Offer",
-    title: "Get 1 Month",
-    highlight: "FREE",
-    subtitle: "On All Plans",
-    cta: "Claim Now",
+    badge: { en: "New Connection Offer", ne: "नयाँ जडान अफर" },
+    title: { en: "Get 1 Month", ne: "१ महिना पाउनुहोस्" },
+    highlight: { en: "FREE", ne: "निःशुल्क" },
+    subtitle: { en: "On All Plans", ne: "सबै प्लानमा" },
+    cta: { en: "Claim Now", ne: "अहिले लिनुहोस्" },
     href: "/contact#new-connection",
     bgFrom: "#25468F",
     bgTo: "#071A3D",
@@ -22,11 +22,11 @@ const promoCards = [
     ),
   },
   {
-    badge: "IPTV Available",
-    title: "Net TV",
-    highlight: "+ Sky TV",
-    subtitle: "100+ Live Channels",
-    cta: "Explore IPTV",
+    badge: { en: "IPTV Available", ne: "IPTV उपलब्ध" },
+    title: { en: "Net TV", ne: "नेट टिभी" },
+    highlight: { en: "+ Sky TV", ne: "+ स्काई टिभी" },
+    subtitle: { en: "100+ Live Channels", ne: "१०० भन्दा बढी लाइभ च्यानलहरू" },
+    cta: { en: "Explore IPTV", ne: "IPTV हेर्नुहोस्" },
     href: "/iptv",
     bgFrom: "#0a5c30",
     bgTo: "#0B7F3A",
@@ -42,11 +42,11 @@ const promoCards = [
     ),
   },
   {
-    badge: "Best Combo Deal",
-    title: "Internet + IPTV",
-    highlight: "Combo",
-    subtitle: "Better Together",
-    cta: "View Combo Plans",
+    badge: { en: "Best Combo Deal", ne: "उत्तम कम्बो डिल" },
+    title: { en: "Internet + IPTV", ne: "इन्टरनेट + IPTV" },
+    highlight: { en: "Combo", ne: "कम्बो" },
+    subtitle: { en: "Better Together", ne: "सँगै राम्रो" },
+    cta: { en: "View Combo Plans", ne: "कम्बो प्लान हेर्नुहोस्" },
     href: "/packages#iptv-combo",
     bgFrom: "#0e3a6e",
     bgTo: "#25468F",
@@ -62,11 +62,11 @@ const promoCards = [
     ),
   },
   {
-    badge: "Pay Online",
-    title: "Recharge",
-    highlight: "Online",
-    subtitle: "eSewa • Khalti • Banking",
-    cta: "Recharge Now",
+    badge: { en: "Pay Online", ne: "अनलाइन भुक्तानी" },
+    title: { en: "Recharge", ne: "रिचार्ज" },
+    highlight: { en: "Online", ne: "अनलाइन" },
+    subtitle: { en: "eSewa • Khalti • Banking", ne: "eSewa • Khalti • बैंकिङ" },
+    cta: { en: "Recharge Now", ne: "अहिले रिचार्ज गर्नुहोस्" },
     href: "/recharge",
     bgFrom: "#1a6b4a",
     bgTo: "#0B7F3A",
@@ -90,7 +90,7 @@ export default function PromoCards() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
           {promoCards.map((card) => (
             <div
-              key={card.title}
+              key={card.title.en}
               className="rounded-2xl overflow-hidden relative group card-hover"
               style={{ background: `linear-gradient(135deg, ${card.bgFrom} 0%, ${card.bgTo} 100%)` }}
             >
@@ -102,23 +102,30 @@ export default function PromoCards() {
                   className="inline-block text-xs font-bold px-2.5 py-1 rounded-full mb-3 text-white"
                   style={{ backgroundColor: "rgba(255,255,255,0.15)" }}
                 >
-                  {card.badge}
+                  <span className="lang-en">{card.badge.en}</span>
+                  <span className="lang-ne">{card.badge.ne}</span>
                 </div>
                 <div className="text-white font-bold text-lg leading-tight">
-                  {card.title}
+                  <span className="lang-en">{card.title.en}</span>
+                  <span className="lang-ne">{card.title.ne}</span>
                 </div>
                 <div
                   className="font-extrabold text-2xl leading-tight"
                   style={{ color: card.accentColor === "#0B7F3A" ? "#4ade80" : "#7dd3fc" }}
                 >
-                  {card.highlight}
+                  <span className="lang-en">{card.highlight.en}</span>
+                  <span className="lang-ne">{card.highlight.ne}</span>
                 </div>
-                <div className="text-white/70 text-xs mt-1 mb-5">{card.subtitle}</div>
+                <div className="text-white/70 text-xs mt-1 mb-5">
+                  <span className="lang-en">{card.subtitle.en}</span>
+                  <span className="lang-ne">{card.subtitle.ne}</span>
+                </div>
                 <Link
                   href={card.href}
                   className="inline-flex items-center gap-1.5 bg-white text-[#25468F] text-xs font-bold px-4 py-2 rounded-lg hover:bg-gray-100 transition-colors"
                 >
-                  {card.cta}
+                  <span className="lang-en">{card.cta.en}</span>
+                  <span className="lang-ne">{card.cta.ne}</span>
                   <ArrowRight size={13} />
                 </Link>
               </div>

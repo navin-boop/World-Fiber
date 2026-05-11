@@ -26,12 +26,17 @@ export default async function TestimonialsSection() {
     <section className="section-padding bg-white">
       <div className="container-custom">
         <div className="text-center mb-12">
-          <p className="text-[#0B7F3A] font-bold text-sm uppercase tracking-widest mb-2">Testimonials</p>
+          <p className="text-[#0B7F3A] font-bold text-sm uppercase tracking-widest mb-2">
+            <span className="lang-en">Testimonials</span>
+            <span className="lang-ne">प्रशंसापत्रहरू</span>
+          </p>
           <h2 className="text-3xl lg:text-4xl font-extrabold text-[#171717] mb-4">
-            What Our Customers Say
+            <span className="lang-en">What Our Customers Say</span>
+            <span className="lang-ne">हाम्रा ग्राहकहरू के भन्छन्</span>
           </h2>
           <p className="text-gray-500 text-lg max-w-xl mx-auto">
-            Trusted by 10,000+ happy customers across Nepal.
+            <span className="lang-en">Trusted by 10,000+ happy customers across Nepal.</span>
+            <span className="lang-ne">नेपालभरि १०,०००+ खुसी ग्राहकहरूको विश्वास।</span>
           </p>
         </div>
 

@@ -11,6 +11,25 @@ interface FullWidthPromoProps {
   cta2Link?: string;
 }
 
+const features = [
+  {
+    en: { label: "Unlimited Data", desc: "No data caps, no hidden charges" },
+    ne: { label: "असीमित डाटा", desc: "कुनै डाटा सीमा छैन, कुनै लुकेको शुल्क छैन" },
+  },
+  {
+    en: { label: "Ultra-Fast Speed", desc: "Up to 200 Mbps for all plans" },
+    ne: { label: "अति-तीव्र गति", desc: "सबै प्लानमा २०० Mbps सम्म" },
+  },
+  {
+    en: { label: "99.9% Uptime", desc: "Reliable fiber infrastructure" },
+    ne: { label: "९९.९% अपटाइम", desc: "विश्वसनीय फाइबर पूर्वाधार" },
+  },
+  {
+    en: { label: "24/7 Support", desc: "Local team always available" },
+    ne: { label: "२४/७ सहायता", desc: "स्थानीय टोली सधैं उपलब्ध" },
+  },
+];
+
 export default function FullWidthPromo({
   title = "Experience Nepal's Fastest",
   highlight = "Fiber Internet",
@@ -42,7 +61,10 @@ export default function FullWidthPromo({
           <div className="text-white">
             <div className="inline-flex items-center gap-2 bg-white/10 border border-white/20 rounded-full px-4 py-1.5 mb-6">
               <div className="w-2 h-2 rounded-full bg-[#0B7F3A] animate-pulse"></div>
-              <span className="text-sm font-medium text-blue-100">100% Fiber to the Home</span>
+              <span className="text-sm font-medium text-blue-100">
+                <span className="lang-en">100% Fiber to the Home</span>
+                <span className="lang-ne">१००% घरमा फाइबर</span>
+              </span>
             </div>
             <h2 className="text-4xl lg:text-5xl font-extrabold leading-tight mb-4">
               {title}{" "}
@@ -68,16 +90,17 @@ export default function FullWidthPromo({
           </div>
 
           <div className="text-white grid grid-cols-2 gap-4">
-            {[
-              { label: "Unlimited Data", desc: "No data caps, no hidden charges" },
-              { label: "Ultra-Fast Speed", desc: "Up to 200 Mbps for all plans" },
-              { label: "99.9% Uptime", desc: "Reliable fiber infrastructure" },
-              { label: "24/7 Support", desc: "Local team always available" },
-            ].map((feature) => (
-              <div key={feature.label} className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl p-5">
+            {features.map((feature) => (
+              <div key={feature.en.label} className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl p-5">
                 <CheckCircle2 size={24} className="text-[#0B7F3A] mb-3" />
-                <div className="font-bold text-base mb-1">{feature.label}</div>
-                <div className="text-blue-200 text-sm">{feature.desc}</div>
+                <div className="font-bold text-base mb-1">
+                  <span className="lang-en">{feature.en.label}</span>
+                  <span className="lang-ne">{feature.ne.label}</span>
+                </div>
+                <div className="text-blue-200 text-sm">
+                  <span className="lang-en">{feature.en.desc}</span>
+                  <span className="lang-ne">{feature.ne.desc}</span>
+                </div>
               </div>
             ))}
           </div>

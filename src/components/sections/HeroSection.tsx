@@ -77,7 +77,10 @@ export default function HeroSection({
           <div className="text-white">
             <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm border border-white/20 rounded-full px-4 py-1.5 mb-6">
               <div className="w-2 h-2 rounded-full bg-[#0B7F3A] animate-pulse"></div>
-              <span className="text-sm font-medium text-blue-100">Nepal&apos;s Fastest Fiber Network</span>
+              <span className="text-sm font-medium text-blue-100">
+                <span className="lang-en">Nepal&apos;s Fastest Fiber Network</span>
+                <span className="lang-ne">नेपालको सबैभन्दा तीव्र फाइबर नेटवर्क</span>
+              </span>
             </div>
             <h1 className="text-4xl lg:text-5xl xl:text-6xl font-extrabold leading-tight mb-6">
               {title.split("Fiber-Fast").length > 1 ? (
@@ -135,7 +138,10 @@ export default function HeroSection({
                         <path d="M 0,150 Q 40,120 70,90 T 120,60" stroke="#0B7F3A" strokeWidth="1" fill="none" opacity="0.6" />
                       </svg>
                     </div>
-                    <div className="text-white/80 text-sm font-medium">Nepal&apos;s Trusted Fiber ISP</div>
+                    <div className="text-white/80 text-sm font-medium">
+                      <span className="lang-en">Nepal&apos;s Trusted Fiber ISP</span>
+                      <span className="lang-ne">नेपालको विश्वसनीय फाइबर ISP</span>
+                    </div>
                     <div className="text-[#2298D4] text-xs mt-1">Kathmandu • Lalitpur • Bhaktapur • Pokhara • Chitwan</div>
                   </div>
                 </div>
@@ -149,7 +155,10 @@ export default function HeroSection({
                   </svg>
                 </div>
                 <div>
-                  <div className="text-xs text-gray-500">Network Uptime</div>
+                  <div className="text-xs text-gray-500">
+                    <span className="lang-en">Network Uptime</span>
+                    <span className="lang-ne">नेटवर्क अपटाइम</span>
+                  </div>
                   <div className="text-sm font-bold text-gray-800">99.9%</div>
                 </div>
               </div>
@@ -160,7 +169,10 @@ export default function HeroSection({
                   </svg>
                 </div>
                 <div>
-                  <div className="text-xs text-gray-500">Happy Customers</div>
+                  <div className="text-xs text-gray-500">
+                    <span className="lang-en">Happy Customers</span>
+                    <span className="lang-ne">खुसी ग्राहकहरू</span>
+                  </div>
                   <div className="text-sm font-bold text-gray-800">10,000+</div>
                 </div>
               </div>

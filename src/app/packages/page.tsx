@@ -22,10 +22,10 @@ interface Package {
 }
 
 const tabs = [
-  { id: "HOME_FIBER", label: "Home Fiber Plans" },
-  { id: "CORPORATE_FIBER", label: "Corporate Fiber" },
-  { id: "IPTV_COMBO", label: "Internet + IPTV Combo" },
-  { id: "IPTV_ADDON", label: "IPTV Add-ons" },
+  { id: "HOME_FIBER", en: "Home Fiber Plans", ne: "होम फाइबर प्लानहरू" },
+  { id: "CORPORATE_FIBER", en: "Corporate Fiber", ne: "कर्पोरेट फाइबर" },
+  { id: "IPTV_COMBO", en: "Internet + IPTV Combo", ne: "इन्टरनेट + IPTV कम्बो" },
+  { id: "IPTV_ADDON", en: "IPTV Add-ons", ne: "IPTV एड-अनहरू" },
 ];
 
 const TERMS = `• Installation charge: Rs 2,500 (one-time)\n• All prices are VAT inclusive\n• Plans auto-renew monthly unless cancelled\n• Fair Usage Policy (FUP) applies beyond specified data limits\n• World Fiber Net reserves the right to modify plans with 7-day notice\n• Speed may vary based on network load and distance from node\n• For full terms visit: worldfibernet.net.np/support`;
@@ -53,14 +53,24 @@ export default function PackagesPage() {
   }, []);
 
   const filtered = packages.filter(p => p.category === activeTab);
+  const activeTabData = tabs.find(t => t.id === activeTab);
 
   return (
     <>
       <section className="bg-gradient-to-br from-[#071A3D] via-[#25468F] to-[#071A3D] py-20">
         <div className="container-custom text-center text-white">
-          <p className="text-[#2298D4] font-bold text-sm uppercase tracking-widest mb-3">Pricing</p>
-          <h1 className="text-4xl lg:text-5xl font-extrabold mb-4">Simple, Transparent Pricing</h1>
-          <p className="text-blue-200 text-lg max-w-xl mx-auto">Choose the perfect plan for your home or business. No hidden fees, no surprises.</p>
+          <p className="text-[#2298D4] font-bold text-sm uppercase tracking-widest mb-3">
+            <span className="lang-en">Pricing</span>
+            <span className="lang-ne">मूल्य निर्धारण</span>
+          </p>
+          <h1 className="text-4xl lg:text-5xl font-extrabold mb-4">
+            <span className="lang-en">Simple, Transparent Pricing</span>
+            <span className="lang-ne">सरल, पारदर्शी मूल्य निर्धारण</span>
+          </h1>
+          <p className="text-blue-200 text-lg max-w-xl mx-auto">
+            <span className="lang-en">Choose the perfect plan for your home or business. No hidden fees, no surprises.</span>
+            <span className="lang-ne">तपाईंको घर वा व्यवसायका लागि उत्तम प्लान छान्नुहोस्। कुनै लुकेको शुल्क छैन, कुनै आश्चर्य छैन।</span>
+          </p>
         </div>
       </section>
 
@@ -70,7 +80,8 @@ export default function PackagesPage() {
             {tabs.map(tab => (
               <button key={tab.id} onClick={() => setActiveTab(tab.id)}
                 className={`px-5 py-4 text-sm font-semibold whitespace-nowrap border-b-2 transition-all ${activeTab === tab.id ? "border-[#25468F] text-[#25468F]" : "border-transparent text-gray-500 hover:text-gray-700"}`}>
-                {tab.label}
+                <span className="lang-en">{tab.en}</span>
+                <span className="lang-ne">{tab.ne}</span>
               </button>
             ))}
           </div>
@@ -83,23 +94,40 @@ export default function PackagesPage() {
             <div className="flex items-center justify-center h-40"><div className="w-8 h-8 border-4 border-[#25468F] border-t-transparent rounded-full animate-spin"></div></div>
           ) : filtered.length === 0 ? (
             <div className="text-center py-20">
-              <p className="text-gray-400 text-lg">No packages available in this category yet.</p>
-              <Link href="/contact" className="mt-4 inline-flex items-center gap-2 text-[#25468F] font-semibold hover:underline">Contact us for custom plans <ArrowRight size={16} /></Link>
+              <p className="text-gray-400 text-lg">
+                <span className="lang-en">No packages available in this category yet.</span>
+                <span className="lang-ne">यस श्रेणीमा अहिलेसम्म कुनै प्याकेजहरू उपलब्ध छैनन्।</span>
+              </p>
+              <Link href="/contact" className="mt-4 inline-flex items-center gap-2 text-[#25468F] font-semibold hover:underline">
+                <span className="lang-en">Contact us for custom plans</span>
+                <span className="lang-ne">कस्टम प्लानहरूका लागि हामीलाई सम्पर्क गर्नुहोस्</span>
+                <ArrowRight size={16} />
+              </Link>
             </div>
           ) : (
             <div className={`grid gap-6 lg:gap-8 max-w-5xl mx-auto ${filtered.length === 1 ? "grid-cols-1 max-w-sm" : filtered.length === 2 ? "grid-cols-1 md:grid-cols-2 max-w-2xl" : "grid-cols-1 md:grid-cols-2 lg:grid-cols-3"}`}>
               {filtered.map(pkg => {
                 const features = JSON.parse(pkg.features || "[]") as string[];
+                const tabData = tabs.find(t => t.id === pkg.category);
                 return (
                   <div key={pkg.id} id={pkg.slug}
                     className={`relative rounded-2xl flex flex-col overflow-hidden transition-all ${pkg.isPopular ? "border-2 border-[#25468F] shadow-2xl scale-105 bg-white" : "border border-gray-200 shadow-sm bg-white hover:shadow-md"}`}>
                     {pkg.isPopular && (
                       <div className="bg-[#25468F] text-white text-xs font-bold text-center py-2 tracking-widest uppercase flex items-center justify-center gap-1.5">
-                        <Star size={12} className="fill-white" /> Most Popular
+                        <Star size={12} className="fill-white" />
+                        <span className="lang-en">Most Popular</span>
+                        <span className="lang-ne">सबैभन्दा लोकप्रिय</span>
                       </div>
                     )}
                     <div className="p-7 flex-1 flex flex-col">
-                      <p className="text-xs font-bold text-[#0B7F3A] uppercase tracking-widest mb-1">{tabs.find(t => t.id === pkg.category)?.label}</p>
+                      <p className="text-xs font-bold text-[#0B7F3A] uppercase tracking-widest mb-1">
+                        {tabData ? (
+                          <>
+                            <span className="lang-en">{tabData.en}</span>
+                            <span className="lang-ne">{tabData.ne}</span>
+                          </>
+                        ) : pkg.category}
+                      </p>
                       <h3 className="font-extrabold text-xl text-gray-800 mb-1">{pkg.name}</h3>
                       <p className="text-gray-400 text-sm mb-5">{pkg.description}</p>
                       <div className="mb-2">
@@ -119,10 +147,15 @@ export default function PackagesPage() {
                       </ul>
                       <Link href="/contact#new-connection"
                         className={`w-full py-3 rounded-xl font-bold text-sm text-center transition-all flex items-center justify-center gap-2 ${pkg.isPopular ? "bg-[#25468F] hover:bg-[#071A3D] text-white shadow-lg" : "border-2 border-[#25468F] text-[#25468F] hover:bg-[#25468F] hover:text-white"}`}>
-                        Choose Plan <ArrowRight size={16} />
+                        <span className="lang-en">Choose Plan</span>
+                        <span className="lang-ne">प्लान छान्नुहोस्</span>
+                        <ArrowRight size={16} />
                       </Link>
                       <div className="mt-4 flex items-center justify-between">
-                        <p className="text-xs text-gray-400">Terms & Conditions apply</p>
+                        <p className="text-xs text-gray-400">
+                          <span className="lang-en">Terms &amp; Conditions apply</span>
+                          <span className="lang-ne">नियम र शर्तहरू लागू हुन्छ</span>
+                        </p>
                         <PackageTermsModal title={pkg.termsTitle} content={pkg.termsContent} />
                       </div>
                     </div>
@@ -137,11 +170,24 @@ export default function PackagesPage() {
       <section className="section-padding-sm bg-white">
         <div className="container-custom max-w-3xl">
           <div className="bg-gradient-to-r from-[#25468F] to-[#071A3D] rounded-3xl p-8 text-white text-center">
-            <h2 className="text-2xl font-extrabold mb-3">Not sure which plan is right for you?</h2>
-            <p className="text-blue-200 mb-6">Our team is happy to help you choose the perfect plan for your needs.</p>
+            <h2 className="text-2xl font-extrabold mb-3">
+              <span className="lang-en">Not sure which plan is right for you?</span>
+              <span className="lang-ne">कुन प्लान तपाईंका लागि सही छ भन्ने थाहा छैन?</span>
+            </h2>
+            <p className="text-blue-200 mb-6">
+              <span className="lang-en">Our team is happy to help you choose the perfect plan for your needs.</span>
+              <span className="lang-ne">हाम्रो टोली तपाईंको आवश्यकताका लागि उत्तम प्लान छान्न मद्दत गर्न खुसी छ।</span>
+            </p>
             <div className="flex flex-wrap gap-4 justify-center">
-              <Link href="/contact" className="px-6 py-3 bg-white text-[#25468F] font-bold rounded-xl hover:bg-blue-50 transition-all flex items-center gap-2">Talk to Us <ArrowRight size={16} /></Link>
-              <Link href="/support" className="px-6 py-3 bg-white/10 border border-white/30 text-white font-bold rounded-xl hover:bg-white/20 transition-all">Get Support</Link>
+              <Link href="/contact" className="px-6 py-3 bg-white text-[#25468F] font-bold rounded-xl hover:bg-blue-50 transition-all flex items-center gap-2">
+                <span className="lang-en">Talk to Us</span>
+                <span className="lang-ne">हामीसँग कुरा गर्नुहोस्</span>
+                <ArrowRight size={16} />
+              </Link>
+              <Link href="/support" className="px-6 py-3 bg-white/10 border border-white/30 text-white font-bold rounded-xl hover:bg-white/20 transition-all">
+                <span className="lang-en">Get Support</span>
+                <span className="lang-ne">सहायता लिनुहोस्</span>
+              </Link>
             </div>
           </div>
         </div>

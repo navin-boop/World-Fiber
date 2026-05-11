@@ -44,10 +44,12 @@ export default function NewsletterSection() {
                 </div>
               </div>
               <h2 className="text-2xl lg:text-3xl font-extrabold mb-2">
-                Stay Connected with World Fiber Net
+                <span className="lang-en">Stay Connected with World Fiber Net</span>
+                <span className="lang-ne">वर्ल्ड फाइबर नेटसँग जोडिएर रहनुहोस्</span>
               </h2>
               <p className="text-blue-200 text-sm lg:text-base">
-                Subscribe for the latest offers, updates and exciting news.
+                <span className="lang-en">Subscribe for the latest offers, updates and exciting news.</span>
+                <span className="lang-ne">नवीनतम अफर, अपडेट र रोमाञ्चक समाचारका लागि सदस्यता लिनुहोस्।</span>
               </p>
             </div>
             <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-3 w-full lg:w-auto lg:min-w-[420px]">
@@ -65,7 +67,8 @@ export default function NewsletterSection() {
                 className="px-6 py-3.5 bg-[#0B7F3A] hover:bg-[#065a28] text-white font-bold rounded-xl transition-all flex items-center gap-2 whitespace-nowrap disabled:opacity-70 disabled:cursor-not-allowed"
               >
                 {loading ? <Loader2 size={18} className="animate-spin" /> : <ArrowRight size={18} />}
-                Subscribe
+                <span className="lang-en">Subscribe</span>
+                <span className="lang-ne">सदस्यता लिनुहोस्</span>
               </button>
             </form>
           </div>

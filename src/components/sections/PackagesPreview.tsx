@@ -55,12 +55,17 @@ export default async function PackagesPreview() {
     <section className="section-padding bg-[#F7F8FA]">
       <div className="container-custom">
         <div className="text-center mb-12">
-          <p className="text-[#0B7F3A] font-bold text-sm uppercase tracking-widest mb-2">Pricing</p>
+          <p className="text-[#0B7F3A] font-bold text-sm uppercase tracking-widest mb-2">
+            <span className="lang-en">Pricing</span>
+            <span className="lang-ne">मूल्य निर्धारण</span>
+          </p>
           <h2 className="text-3xl lg:text-4xl font-extrabold text-[#171717] mb-4">
-            Simple, Transparent Pricing
+            <span className="lang-en">Simple, Transparent Pricing</span>
+            <span className="lang-ne">सरल, पारदर्शी मूल्य निर्धारण</span>
           </h2>
           <p className="text-gray-500 text-lg max-w-xl mx-auto">
-            Choose the perfect plan for your home or business. No hidden fees.
+            <span className="lang-en">Choose the perfect plan for your home or business. No hidden fees.</span>
+            <span className="lang-ne">तपाईंको घर वा व्यवसायका लागि उत्तम प्लान छान्नुहोस्। कुनै लुकेको शुल्क छैन।</span>
           </p>
         </div>
 
@@ -78,13 +83,24 @@ export default async function PackagesPreview() {
               >
                 {pkg.isPopular && (
                   <div className="bg-[#25468F] text-white text-xs font-bold text-center py-2 tracking-widest uppercase">
-                    Most Popular
+                    <span className="lang-en">Most Popular</span>
+                    <span className="lang-ne">सबैभन्दा लोकप्रिय</span>
                   </div>
                 )}
                 <div className="p-7 flex-1 flex flex-col">
                   {/* Category */}
                   <p className="text-xs font-semibold text-[#0B7F3A] uppercase tracking-widest mb-1">
-                    {pkg.category === "IPTV_COMBO" ? "Internet + IPTV Combo" : "Home Fiber"}
+                    {pkg.category === "IPTV_COMBO" ? (
+                      <>
+                        <span className="lang-en">Internet + IPTV Combo</span>
+                        <span className="lang-ne">इन्टरनेट + IPTV कम्बो</span>
+                      </>
+                    ) : (
+                      <>
+                        <span className="lang-en">Home Fiber</span>
+                        <span className="lang-ne">होम फाइबर</span>
+                      </>
+                    )}
                   </p>
                   <h3 className="font-extrabold text-xl text-gray-800 mb-1">{pkg.name}</h3>
                   <p className="text-gray-400 text-sm mb-5">{pkg.description}</p>
@@ -122,13 +138,17 @@ export default async function PackagesPreview() {
                         : "border-2 border-[#25468F] text-[#25468F] hover:bg-[#25468F] hover:text-white"
                     }`}
                   >
-                    Choose Plan
+                    <span className="lang-en">Choose Plan</span>
+                    <span className="lang-ne">प्लान छान्नुहोस्</span>
                     <ArrowRight size={16} />
                   </Link>
 
                   {/* Terms */}
                   <div className="mt-4 flex items-center justify-between">
-                    <p className="text-xs text-gray-400">Terms & Conditions apply</p>
+                    <p className="text-xs text-gray-400">
+                      <span className="lang-en">Terms &amp; Conditions apply</span>
+                      <span className="lang-ne">नियम र शर्तहरू लागू हुन्छ</span>
+                    </p>
                     <PackageTermsModal
                       title={pkg.termsTitle}
                       content={pkg.termsContent}
@@ -145,7 +165,8 @@ export default async function PackagesPreview() {
             href="/packages"
             className="inline-flex items-center gap-2 px-6 py-3 bg-white border-2 border-[#25468F] text-[#25468F] font-bold rounded-xl hover:bg-[#25468F] hover:text-white transition-all"
           >
-            View All Plans
+            <span className="lang-en">View All Plans</span>
+            <span className="lang-ne">सबै प्लान हेर्नुहोस्</span>
             <ArrowRight size={18} />
           </Link>
         </div>
