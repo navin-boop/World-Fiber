@@ -7,15 +7,13 @@ import { cn } from "@/lib/utils";
 import LangToggle from "@/components/LangToggle";
 
 const navLinks = [
-  { href: "/",        en: "Home",      ne: "गृहपृष्ठ" },
-  { href: "/about",   en: "About",     ne: "हाम्रोबारे" },
-  { href: "/services",en: "Services",  ne: "सेवाहरू" },
-  { href: "/packages",en: "Packages",  ne: "प्याकेजहरू" },
-  { href: "/iptv",    en: "IPTV",      ne: "आईपीटीभी" },
-  { href: "/recharge",en: "Recharge",  ne: "रिचार्ज" },
-  { href: "/offers",  en: "Offers",    ne: "अफरहरू" },
-  { href: "/faq",     en: "FAQ",       ne: "प्रश्नोत्तर" },
-  { href: "/contact", en: "Contact",   ne: "सम्पर्क" },
+  { href: "/",         en: "Home",     ne: "गृहपृष्ठ" },
+  { href: "/packages", en: "Packages", ne: "प्याकेजहरू" },
+  { href: "/iptv",     en: "IPTV",     ne: "आईपीटीभी" },
+  { href: "/recharge", en: "Recharge", ne: "रिचार्ज" },
+  { href: "/offers",   en: "Offers",   ne: "अफरहरू" },
+  { href: "/support",  en: "Support",  ne: "सहायता" },
+  { href: "/contact",  en: "Contact",  ne: "सम्पर्क" },
 ];
 
 interface HeaderProps {
@@ -70,12 +68,10 @@ export default function Header({ logoUrl }: HeaderProps) {
     >
       <div className="container-custom">
         <div className="flex items-center justify-between h-16 lg:h-[72px]">
-          {/* Logo */}
           <Link href="/" className="flex items-center gap-2 flex-shrink-0 group">
             <Logo logoUrl={logoUrl} />
           </Link>
 
-          {/* Desktop Nav */}
           <nav className="hidden lg:flex items-center gap-0.5">
             {navLinks.map((link) => (
               <Link
@@ -90,7 +86,6 @@ export default function Header({ logoUrl }: HeaderProps) {
             ))}
           </nav>
 
-          {/* Desktop CTA Buttons */}
           <div className="hidden lg:flex items-center gap-2.5">
             <LangToggle />
             <a
@@ -111,7 +106,6 @@ export default function Header({ logoUrl }: HeaderProps) {
             </Link>
           </div>
 
-          {/* Mobile: LangToggle + Hamburger */}
           <div className="lg:hidden flex items-center gap-2">
             <LangToggle />
             <button
@@ -125,7 +119,6 @@ export default function Header({ logoUrl }: HeaderProps) {
         </div>
       </div>
 
-      {/* Mobile Menu */}
       {mobileOpen && (
         <div className="lg:hidden border-t border-gray-100 bg-white shadow-xl shadow-black/10 animate-fade-in">
           <div className="container-custom py-4">
